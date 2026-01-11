@@ -1,0 +1,648 @@
+<?xml version="1.0"?><artefact xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="artefact.xsd" name="Flexible Container" slug="flexible-container" type="code-package" schemaVersion="2">
+  <file path="readme.txt">
+    <description>This file contains the readme information for the block. It is used to provide information about the block, its usage, and any other relevant details.</description>
+    <content><![CDATA[
+=== Flexible Container ===
+
+Contributors:      WordPress Telex
+Tags:              block, container, responsive, positioning
+Tested up to:      6.8
+Stable tag:        0.1.0
+License:           GPLv2 or later
+License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+
+A flexible container block with responsive positioning controls and support for CSS variables.
+
+== Description ==
+
+The Flexible Container block provides advanced positioning and sizing controls with full responsive support. Perfect for creating complex layouts with precise control over element positioning across different screen sizes.
+
+Key Features:
+* Position type control (static, relative, absolute, fixed, sticky)
+* Individual controls for top, right, bottom, left positioning
+* Width and height controls
+* Responsive controls for desktop, tablet, and mobile viewports
+* Support for CSS variables (var(--custom-property)) and calc() functions
+* Clean, intuitive UI with viewport tabs
+* Saves unique settings for each breakpoint
+
+Use Cases:
+* Create overlays and floating elements
+* Build responsive card layouts
+* Position elements precisely relative to their containers
+* Implement sticky headers or sidebars
+* Create complex grid-like layouts with absolute positioning
+
+== Installation ==
+
+1. Upload the plugin files to the `/wp-content/plugins/flexible-container` directory, or install the plugin through the WordPress plugins screen directly.
+2. Activate the plugin through the 'Plugins' screen in WordPress
+3. Add the Flexible Container block from the block inserter
+4. Configure positioning and sizing using the sidebar controls
+5. Switch between viewport tabs to set responsive values
+
+== Frequently Asked Questions ==
+
+= Can I use CSS variables and calc() functions? =
+
+Yes! All positioning and sizing fields accept CSS variables like var(--my-spacing) and calc() functions like calc(100% - 20px).
+
+= How do the responsive controls work? =
+
+The block provides three viewport tabs: Desktop, Tablet, and Mobile. Each viewport saves its own set of positioning values, allowing you to create fully responsive layouts.
+
+= What position types are supported? =
+
+The block supports all CSS position types: static, relative, absolute, fixed, and sticky.
+
+= Can I nest other blocks inside this container? =
+
+Absolutely! The Flexible Container is designed to hold any WordPress blocks, including text, images, and other containers.
+
+== Screenshots ==
+
+1. The Flexible Container block in the editor with responsive viewport controls
+2. Position type selector and positioning controls in the sidebar
+3. Example of a complex layout using multiple Flexible Containers
+
+== Changelog ==
+
+= 0.1.0 =
+* Initial release
+* Responsive viewport controls (desktop, tablet, mobile)
+* Position type selector
+* Top, right, bottom, left positioning controls
+* Width and height controls
+* Support for CSS variables and calc() functions
+]]></content>
+  </file>
+  <file path="flexible-container.php">
+    <description>This file contains the block registration code in the form of a single block plugin. Any other plugin related functionality should be added to this file. All block rendering functionality should go to the `render.php` file.</description>
+    <content><![CDATA[<?php
+/**
+ * Plugin Name:       Flexible Container
+ * Description:       A flexible container block with responsive positioning controls and support for CSS variables
+ * Version:           0.1.0
+ * Requires at least: 6.1
+ * Requires PHP:      7.0
+ * Author:            WordPress Telex
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       flexible-container
+ *
+ * @package TelexFlexibleContainer
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Registers the block using the metadata loaded from the `block.json` file.
+ * Behind the scenes, it registers also all assets so they can be enqueued
+ * through the block editor in the corresponding context.
+ *
+ * @see https://developer.wordpress.org/reference/functions/register_block_type/
+ */
+function telex_flexible_container_block_init() {
+	register_block_type( __DIR__ . '/build/' );
+}
+add_action( 'init', 'telex_flexible_container_block_init' );
+]]></content>
+  </file>
+  <file path="src/block.json">
+    <description>This file contains metadata about the block including its name, title, category, icon, and other properties.</description>
+    <content><![CDATA[
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "telex/flexible-container",
+	"version": "0.1.0",
+	"title": "Flexible Container",
+	"category": "design",
+	"icon": "move",
+	"description": "A flexible container with responsive positioning and sizing controls",
+	"keywords": ["container", "position", "responsive", "layout"],
+	"attributes": {
+		"desktop": {
+			"type": "object",
+			"default": {
+				"position": "",
+				"top": "",
+				"right": "",
+				"bottom": "",
+				"left": "",
+				"width": "",
+				"height": "",
+				"zIndex": ""
+			}
+		},
+		"tablet": {
+			"type": "object",
+			"default": {
+				"position": "",
+				"top": "",
+				"right": "",
+				"bottom": "",
+				"left": "",
+				"width": "",
+				"height": "",
+				"zIndex": ""
+			}
+		},
+		"mobile": {
+			"type": "object",
+			"default": {
+				"position": "",
+				"top": "",
+				"right": "",
+				"bottom": "",
+				"left": "",
+				"width": "",
+				"height": "",
+				"zIndex": ""
+			}
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": true,
+		"color": {
+			"background": true,
+			"text": true,
+			"link": true
+		},
+		"spacing": {
+			"padding": true,
+			"margin": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true
+		}
+	},
+	"textdomain": "flexible-container",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php"
+}
+]]></content>
+  </file>
+  <file path="src/index.js">
+    <description>This file registers the block, specifies the edit and save functions, and loads the block's metadata</description>
+    <content><![CDATA[
+import { registerBlockType } from '@wordpress/blocks';
+import './style.scss';
+import Edit from './edit';
+import metadata from './block.json';
+
+registerBlockType( metadata.name, {
+	edit: Edit
+} );
+]]></content>
+  </file>
+  <file path="src/edit.js">
+    <description>This file contains the edit function for the block which is responsible for rendering the block in the editor.</description>
+    <content><![CDATA[import { __ } from '@wordpress/i18n';
+import { useBlockProps, InspectorControls, InnerBlocks } from '@wordpress/block-editor';
+import { PanelBody, TextControl, SelectControl, Button, ButtonGroup } from '@wordpress/components';
+import { useState } from '@wordpress/element';
+import { desktop, tablet, mobile } from '@wordpress/icons';
+import './editor.scss';
+
+export default function Edit({ attributes, setAttributes }) {
+	const [activeViewport, setActiveViewport] = useState('mobile');
+	
+	const viewportData = attributes[activeViewport];
+	
+	// Get effective value with inheritance: desktop inherits from tablet, tablet inherits from mobile
+	const getEffectiveValue = (key) => {
+		if (activeViewport === 'mobile') {
+			return attributes.mobile[key];
+		}
+		if (activeViewport === 'tablet') {
+			// If tablet has a value, use it, otherwise inherit from mobile
+			return attributes.tablet[key] !== '' ? attributes.tablet[key] : attributes.mobile[key];
+		}
+		if (activeViewport === 'desktop') {
+			// If desktop has a value, use it
+			if (attributes.desktop[key] !== '') return attributes.desktop[key];
+			// Otherwise check tablet
+			if (attributes.tablet[key] !== '') return attributes.tablet[key];
+			// Finally fall back to mobile
+			return attributes.mobile[key];
+		}
+		return '';
+	};
+	
+	const updateViewportAttribute = (key, value) => {
+		setAttributes({
+			[activeViewport]: {
+				...viewportData,
+				[key]: value
+			}
+		});
+	};
+
+	const positionOptions = [
+		{ label: __('Default', 'flexible-container'), value: '' },
+		{ label: __('Static', 'flexible-container'), value: 'static' },
+		{ label: __('Relative', 'flexible-container'), value: 'relative' },
+		{ label: __('Absolute', 'flexible-container'), value: 'absolute' },
+		{ label: __('Fixed', 'flexible-container'), value: 'fixed' },
+		{ label: __('Sticky', 'flexible-container'), value: 'sticky' }
+	];
+
+	const viewportIcons = {
+		mobile: { icon: mobile, label: __('Mobile', 'flexible-container') },
+		tablet: { icon: tablet, label: __('Tablet', 'flexible-container') },
+		desktop: { icon: desktop, label: __('Desktop', 'flexible-container') }
+	};
+
+	const getInlineStyles = () => {
+		const styles = {};
+		
+		// Use effective values for preview
+		const position = getEffectiveValue('position');
+		const top = getEffectiveValue('top');
+		const right = getEffectiveValue('right');
+		const bottom = getEffectiveValue('bottom');
+		const left = getEffectiveValue('left');
+		const width = getEffectiveValue('width');
+		const height = getEffectiveValue('height');
+		const zIndex = getEffectiveValue('zIndex');
+		
+		if (position) styles.position = position;
+		if (top) styles.top = top;
+		if (right) styles.right = right;
+		if (bottom) styles.bottom = bottom;
+		if (left) styles.left = left;
+		if (width) styles.width = width;
+		if (height) styles.height = height;
+		if (zIndex) styles.zIndex = zIndex;
+		
+		return styles;
+	};
+
+	const blockProps = useBlockProps({
+		style: getInlineStyles()
+	});
+	
+	// Check if current viewport has overridden values
+	const hasOverride = (key) => {
+		if (activeViewport === 'mobile') return true;
+		return viewportData[key] !== '';
+	};
+
+	return (
+		<>
+			<InspectorControls>
+				<div className="flexible-container-viewport-controls">
+					<div className="flexible-container-viewport-tabs">
+						<ButtonGroup>
+							{Object.entries(viewportIcons).map(([key, { icon, label }]) => (
+								<Button
+									key={key}
+									icon={icon}
+									isPressed={activeViewport === key}
+									onClick={() => setActiveViewport(key)}
+									label={label}
+								/>
+							))}
+						</ButtonGroup>
+					</div>
+					<div className="flexible-container-viewport-label">
+						{__('Editing:', 'flexible-container')} <strong>{viewportIcons[activeViewport].label}</strong>
+						{activeViewport !== 'mobile' && (
+							<div className="flexible-container-inheritance-note">
+								{activeViewport === 'tablet' && __('Inherits from Mobile unless overridden', 'flexible-container')}
+								{activeViewport === 'desktop' && __('Inherits from Tablet/Mobile unless overridden', 'flexible-container')}
+							</div>
+						)}
+					</div>
+				</div>
+				
+				<PanelBody title={__('Position', 'flexible-container')}>
+					<SelectControl
+						label={__('Position Type', 'flexible-container')}
+						value={viewportData.position}
+						options={positionOptions}
+						onChange={(value) => updateViewportAttribute('position', value)}
+						help={!hasOverride('position') && activeViewport !== 'mobile' ? __('Inherited: ', 'flexible-container') + (getEffectiveValue('position') || 'default') : __('Controls how the element is positioned', 'flexible-container')}
+						className={!hasOverride('position') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
+					/>
+					
+					<TextControl
+						label={__('Top', 'flexible-container')}
+						value={viewportData.top}
+						onChange={(value) => updateViewportAttribute('top', value)}
+						placeholder={!hasOverride('top') && activeViewport !== 'mobile' ? getEffectiveValue('top') || 'inherited' : 'e.g., 10px, 0, calc(50% - 20px)'}
+						help={!hasOverride('top') && activeViewport !== 'mobile' ? __('Inherited (edit to override)', 'flexible-container') : ''}
+						className={!hasOverride('top') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
+					/>
+					
+					<TextControl
+						label={__('Right', 'flexible-container')}
+						value={viewportData.right}
+						onChange={(value) => updateViewportAttribute('right', value)}
+						placeholder={!hasOverride('right') && activeViewport !== 'mobile' ? getEffectiveValue('right') || 'inherited' : 'e.g., 10px, 0, calc(50% - 20px)'}
+						help={!hasOverride('right') && activeViewport !== 'mobile' ? __('Inherited (edit to override)', 'flexible-container') : ''}
+						className={!hasOverride('right') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
+					/>
+					
+					<TextControl
+						label={__('Bottom', 'flexible-container')}
+						value={viewportData.bottom}
+						onChange={(value) => updateViewportAttribute('bottom', value)}
+						placeholder={!hasOverride('bottom') && activeViewport !== 'mobile' ? getEffectiveValue('bottom') || 'inherited' : 'e.g., 10px, 0, calc(50% - 20px)'}
+						help={!hasOverride('bottom') && activeViewport !== 'mobile' ? __('Inherited (edit to override)', 'flexible-container') : ''}
+						className={!hasOverride('bottom') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
+					/>
+					
+					<TextControl
+						label={__('Left', 'flexible-container')}
+						value={viewportData.left}
+						onChange={(value) => updateViewportAttribute('left', value)}
+						placeholder={!hasOverride('left') && activeViewport !== 'mobile' ? getEffectiveValue('left') || 'inherited' : 'e.g., 10px, 0, calc(50% - 20px)'}
+						help={!hasOverride('left') && activeViewport !== 'mobile' ? __('Inherited (edit to override)', 'flexible-container') : ''}
+						className={!hasOverride('left') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
+					/>
+					
+					<TextControl
+						label={__('Z-Index', 'flexible-container')}
+						value={viewportData.zIndex}
+						onChange={(value) => updateViewportAttribute('zIndex', value)}
+						placeholder={!hasOverride('zIndex') && activeViewport !== 'mobile' ? getEffectiveValue('zIndex') || 'inherited' : 'e.g., 10, 999'}
+						help={!hasOverride('zIndex') && activeViewport !== 'mobile' ? __('Inherited (edit to override)', 'flexible-container') : __('Stacking order (higher values appear on top)', 'flexible-container')}
+						className={!hasOverride('zIndex') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
+					/>
+				</PanelBody>
+				
+				<PanelBody title={__('Dimensions', 'flexible-container')} initialOpen={true}>
+					<TextControl
+						label={__('Width', 'flexible-container')}
+						value={viewportData.width}
+						onChange={(value) => updateViewportAttribute('width', value)}
+						placeholder={!hasOverride('width') && activeViewport !== 'mobile' ? getEffectiveValue('width') || 'inherited' : 'e.g., 100%, calc(100vw - 40px)'}
+						help={!hasOverride('width') && activeViewport !== 'mobile' ? __('Inherited (edit to override)', 'flexible-container') : ''}
+						className={!hasOverride('width') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
+					/>
+					
+					<TextControl
+						label={__('Height', 'flexible-container')}
+						value={viewportData.height}
+						onChange={(value) => updateViewportAttribute('height', value)}
+						placeholder={!hasOverride('height') && activeViewport !== 'mobile' ? getEffectiveValue('height') || 'inherited' : 'e.g., 100vh, calc(100% - 40px)'}
+						help={!hasOverride('height') && activeViewport !== 'mobile' ? __('Inherited (edit to override)', 'flexible-container') : ''}
+						className={!hasOverride('height') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
+					/>
+				</PanelBody>
+			</InspectorControls>
+
+			<div {...blockProps}>
+				<InnerBlocks />
+			</div>
+		</>
+	);
+}]]></content>
+  </file>
+  <file path="src/save.js">
+    <description>This file contains the save function for the block which is responsible for creating the static result of rendering the block on the client to display the saved result on the front end.</description>
+    <content><![CDATA[
+]]></content>
+  </file>
+  <file path="src/style.scss">
+    <description>This file contains styles for the block in the front end.</description>
+    <content><![CDATA[
+.wp-block-telex-flexible-container {
+	/* Responsive styles are applied via inline styles from attributes */
+	min-height: 20px;
+	
+	/* Mobile styles */
+	@media (max-width: 599px) {
+		/* Mobile-specific styles will be applied via render.php */
+	}
+	
+	/* Tablet styles */
+	@media (min-width: 600px) and (max-width: 1023px) {
+		/* Tablet-specific styles will be applied via render.php */
+	}
+	
+	/* Desktop styles */
+	@media (min-width: 1024px) {
+		/* Desktop-specific styles will be applied via render.php */
+	}
+}
+]]></content>
+  </file>
+  <file path="src/editor.scss">
+    <description>This file contains styles for the block in the editor.</description>
+    <content><![CDATA[.wp-block-telex-flexible-container {
+	outline: 1px dashed #ccc;
+	min-height: 50px;
+	
+	&.is-selected {
+		outline-color: #007cba;
+		outline-width: 2px;
+	}
+	
+	/* Ensure empty blocks remain visible */
+	&:empty::before {
+		content: '';
+		display: block;
+		min-height: 50px;
+	}
+}
+
+.flexible-container-viewport-controls {
+	padding: 16px;
+	background: #f0f0f0;
+	border-bottom: 1px solid #ddd;
+	margin: 0 -16px 16px -16px;
+}
+
+.flexible-container-viewport-tabs {
+	margin-bottom: 12px;
+	
+	.components-button-group {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+	}
+	
+	.components-button {
+		flex: 1;
+		justify-content: center;
+	}
+}
+
+.flexible-container-viewport-label {
+	padding: 8px 0 0;
+	font-size: 13px;
+	color: #757575;
+	
+	strong {
+		color: #1e1e1e;
+	}
+}
+
+.flexible-container-inheritance-note {
+	margin-top: 6px;
+	font-size: 11px;
+	color: #007cba;
+	font-style: italic;
+}
+
+.components-panel__body {
+	.components-text-control__input {
+		font-family: monospace;
+		font-size: 12px;
+	}
+	
+	.is-inherited {
+		.components-text-control__input,
+		.components-select-control__input {
+			background-color: #f0f6fc;
+			border-color: #c3e0f7;
+		}
+		
+		.components-base-control__help {
+			color: #007cba;
+			font-style: italic;
+		}
+	}
+}]]></content>
+  </file>
+  <file path="src/view.js">
+    <description>This file contains the view function for the block which is responsible for rendering interactive behaviors of the block on the front end.</description>
+    <content><![CDATA[
+// No interactive behavior needed for this block
+]]></content>
+  </file>
+  <file path="src/render.php">
+    <description>This file contains the render callback function for the block, which is responsible for rendering the block content on the front end.</description>
+    <content><![CDATA[<?php
+/**
+ * Render callback for Flexible Container block
+ *
+ * @param array    $attributes Block attributes.
+ * @param string   $content    Block default content.
+ * @param WP_Block $block      Block instance.
+ * @return string Block HTML.
+ */
+
+if ( ! function_exists( 'telex_flexible_container_get_inherited_value' ) ) {
+	/**
+	 * Helper function to get effective value with inheritance
+	 *
+	 * @param string $prop Property name.
+	 * @param array  $mobile Mobile attributes.
+	 * @param array  $tablet Tablet attributes.
+	 * @param array  $desktop Desktop attributes.
+	 * @param string $viewport Current viewport.
+	 * @return string Property value.
+	 */
+	function telex_flexible_container_get_inherited_value( $prop, $mobile, $tablet, $desktop, $viewport ) {
+		if ( $viewport === 'mobile' ) {
+			return isset( $mobile[ $prop ] ) ? $mobile[ $prop ] : '';
+		}
+		if ( $viewport === 'tablet' ) {
+			// Tablet inherits from mobile if not set
+			if ( isset( $tablet[ $prop ] ) && $tablet[ $prop ] !== '' ) {
+				return $tablet[ $prop ];
+			}
+			return isset( $mobile[ $prop ] ) ? $mobile[ $prop ] : '';
+		}
+		if ( $viewport === 'desktop' ) {
+			// Desktop inherits from tablet, which inherits from mobile
+			if ( isset( $desktop[ $prop ] ) && $desktop[ $prop ] !== '' ) {
+				return $desktop[ $prop ];
+			}
+			if ( isset( $tablet[ $prop ] ) && $tablet[ $prop ] !== '' ) {
+				return $tablet[ $prop ];
+			}
+			return isset( $mobile[ $prop ] ) ? $mobile[ $prop ] : '';
+		}
+		return '';
+	}
+}
+
+$mobile = isset( $attributes['mobile'] ) ? $attributes['mobile'] : array();
+$tablet = isset( $attributes['tablet'] ) ? $attributes['tablet'] : array();
+$desktop = isset( $attributes['desktop'] ) ? $attributes['desktop'] : array();
+
+// Build inline styles for mobile (default/base styles)
+$mobile_styles = array();
+$props = array( 'position', 'top', 'right', 'bottom', 'left', 'width', 'height', 'zIndex' );
+
+foreach ( $props as $prop ) {
+	$value = telex_flexible_container_get_inherited_value( $prop, $mobile, $tablet, $desktop, 'mobile' );
+	if ( $value !== '' ) {
+		$css_prop = $prop === 'zIndex' ? 'z-index' : $prop;
+		$mobile_styles[] = $css_prop . ': ' . esc_attr( $value );
+	}
+}
+
+$inline_style = ! empty( $mobile_styles ) ? implode( '; ', $mobile_styles ) : '';
+
+// Generate unique ID for this block instance
+$unique_id = 'flexible-container-' . wp_unique_id();
+
+// Build media query styles
+$media_styles = '';
+
+// Tablet styles (min-width: 600px)
+$tablet_styles = array();
+foreach ( $props as $prop ) {
+	$tablet_value = telex_flexible_container_get_inherited_value( $prop, $mobile, $tablet, $desktop, 'tablet' );
+	$mobile_value = telex_flexible_container_get_inherited_value( $prop, $mobile, $tablet, $desktop, 'mobile' );
+	
+	// Only add to media query if different from mobile
+	if ( $tablet_value !== '' && $tablet_value !== $mobile_value ) {
+		$css_prop = $prop === 'zIndex' ? 'z-index' : $prop;
+		$tablet_styles[] = $css_prop . ': ' . esc_attr( $tablet_value );
+	}
+}
+
+if ( ! empty( $tablet_styles ) ) {
+	$media_styles .= '@media (min-width: 600px) { .' . esc_attr( $unique_id ) . ' { ' . implode( '; ', $tablet_styles ) . '; } }';
+}
+
+// Desktop styles (min-width: 1024px)
+$desktop_styles = array();
+foreach ( $props as $prop ) {
+	$desktop_value = telex_flexible_container_get_inherited_value( $prop, $mobile, $tablet, $desktop, 'desktop' );
+	$tablet_value = telex_flexible_container_get_inherited_value( $prop, $mobile, $tablet, $desktop, 'tablet' );
+	
+	// Only add to media query if different from tablet
+	if ( $desktop_value !== '' && $desktop_value !== $tablet_value ) {
+		$css_prop = $prop === 'zIndex' ? 'z-index' : $prop;
+		$desktop_styles[] = $css_prop . ': ' . esc_attr( $desktop_value );
+	}
+}
+
+if ( ! empty( $desktop_styles ) ) {
+	$media_styles .= '@media (min-width: 1024px) { .' . esc_attr( $unique_id ) . ' { ' . implode( '; ', $desktop_styles ) . '; } }';
+}
+
+// Get block wrapper attributes
+$wrapper_attributes = get_block_wrapper_attributes(
+	array(
+		'class' => $unique_id,
+		'style' => $inline_style,
+	)
+);
+?>
+
+<?php if ( ! empty( $media_styles ) ) : ?>
+<style>
+<?php echo $media_styles; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+</style>
+<?php endif; ?>
+
+<div <?php echo $wrapper_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+	<?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+</div>]]></content>
+  </file>
+</artefact>

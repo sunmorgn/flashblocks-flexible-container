@@ -1,0 +1,79 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "flashblocks/flexible-container",
+  "version": "0.1.0",
+  "title": "Flexible Container",
+  "category": "design",
+  "icon": "move",
+  "description": "A flexible container with responsive positioning and sizing controls",
+  "keywords": [
+    "container",
+    "position",
+    "responsive",
+    "layout"
+  ],
+  "attributes": {
+    "desktop": {
+      "type": "object",
+      "default": {
+        "position": "",
+        "top": "",
+        "right": "",
+        "bottom": "",
+        "left": "",
+        "width": "",
+        "height": "",
+        "zIndex": ""
+      }
+    },
+    "tablet": {
+      "type": "object",
+      "default": {
+        "position": "",
+        "top": "",
+        "right": "",
+        "bottom": "",
+        "left": "",
+        "width": "",
+        "height": "",
+        "zIndex": ""
+      }
+    },
+    "mobile": {
+      "type": "object",
+      "default": {
+        "position": "",
+        "top": "",
+        "right": "",
+        "bottom": "",
+        "left": "",
+        "width": "",
+        "height": "",
+        "zIndex": ""
+      }
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": true,
+    "color": {
+      "background": true,
+      "text": true,
+      "link": true
+    },
+    "spacing": {
+      "padding": true,
+      "margin": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true
+    }
+  },
+  "textdomain": "flexible-container",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php"
+}

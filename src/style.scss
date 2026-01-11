@@ -1,0 +1,20 @@
+
+.wp-block-flashblocks-flexible-container {
+	/* Responsive styles are applied via inline styles from attributes */
+	min-height: 20px;
+	
+	/* Mobile styles */
+	@media (max-width: 599px) {
+		/* Mobile-specific styles will be applied via render.php */
+	}
+	
+	/* Tablet styles */
+	@media (min-width: 600px) and (max-width: 1023px) {
+		/* Tablet-specific styles will be applied via render.php */
+	}
+	
+	/* Desktop styles */
+	@media (min-width: 1024px) {
+		/* Desktop-specific styles will be applied via render.php */
+	}
+}
