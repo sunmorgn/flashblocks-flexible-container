@@ -25,15 +25,22 @@
 }
 .flexible-container-viewport-tabs {
   margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .flexible-container-viewport-tabs .components-button-group {
-  width: 100%;
+  flex: 1;
   display: flex;
   justify-content: space-between;
 }
 .flexible-container-viewport-tabs .components-button {
   flex: 1;
   justify-content: center;
+}
+.flexible-container-viewport-tabs .flexible-container-scroll-btn {
+  flex: 0 0 auto;
+  margin-left: 8px;
 }
 .flexible-container-viewport-label {
   padding: 8px 0 0;

@@ -3,11 +3,28 @@ import { useBlockProps, InspectorControls, InnerBlocks } from '@wordpress/block-
 import { PanelBody, TextControl, SelectControl, Button, ButtonGroup } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { desktop, tablet, mobile } from '@wordpress/icons';
+import { desktop, tablet, mobile, search } from '@wordpress/icons';
 import './editor.scss';
 
-export default function Edit({ attributes, setAttributes }) {
+export default function Edit({ attributes, setAttributes, clientId }) {
 	const [activeViewport, setActiveViewport] = useState('mobile');
+	
+	// Get the selectBlock action to focus the block
+	const { selectBlock } = useDispatch('core/block-editor');
+	
+	// Scroll to this block - use native focus which handles iframe scrolling
+	const scrollToBlock = () => {
+		// First deselect, then reselect to force WP to scroll to it
+		selectBlock(null);
+		setTimeout(() => {
+			selectBlock(clientId, 0); // 0 = focus position
+		}, 50);
+	};
+	
+	// Delayed scroll for after viewport transitions
+	const scrollToBlockDelayed = (delay = 600) => {
+		setTimeout(scrollToBlock, delay);
+	};
 	
 	// Get the editor's current device preview mode
 	const editorDeviceType = useSelect((select) => {
@@ -44,7 +61,7 @@ export default function Edit({ attributes, setAttributes }) {
 		}
 	};
 	
-	// Sync our tabs when editor preview changes
+	// Sync our tabs when editor preview changes (from WP toolbar)
 	useEffect(() => {
 		const viewportMap = {
 			'Mobile': 'mobile',
@@ -54,6 +71,8 @@ export default function Edit({ attributes, setAttributes }) {
 		const mappedViewport = viewportMap[editorDeviceType];
 		if (mappedViewport && mappedViewport !== activeViewport) {
 			setActiveViewport(mappedViewport);
+			// Scroll to block after viewport animation completes
+			scrollToBlockDelayed(600);
 		}
 	}, [editorDeviceType]);
 	
@@ -61,6 +80,8 @@ export default function Edit({ attributes, setAttributes }) {
 	const handleViewportChange = (viewport) => {
 		setActiveViewport(viewport);
 		syncEditorPreview(viewport);
+		// Auto-scroll to block after viewport transition completes
+		scrollToBlockDelayed(500);
 	};
 	
 	const viewportData = attributes[activeViewport];
@@ -127,24 +148,13 @@ export default function Edit({ attributes, setAttributes }) {
 	const getInlineStyles = () => {
 		const styles = {};
 		
-		// Use effective values for preview
-		const position = getEffectiveValue('position');
-		const top = getEffectiveValue('top');
-		const right = getEffectiveValue('right');
-		const bottom = getEffectiveValue('bottom');
-		const left = getEffectiveValue('left');
+		// Only apply width/height in editor - NOT position styles
+		// Position styles break WordPress's scroll-into-view behavior
 		const width = getEffectiveValue('width');
 		const height = getEffectiveValue('height');
-		const zIndex = getEffectiveValue('zIndex');
 		
-		if (position) styles.position = position;
-		if (top) styles.top = top;
-		if (right) styles.right = right;
-		if (bottom) styles.bottom = bottom;
-		if (left) styles.left = left;
 		if (width) styles.width = width;
 		if (height) styles.height = height;
-		if (zIndex) styles.zIndex = zIndex;
 		
 		return styles;
 	};
@@ -175,6 +185,12 @@ export default function Edit({ attributes, setAttributes }) {
 								/>
 							))}
 						</ButtonGroup>
+						<Button
+							icon={search}
+							onClick={() => scrollToBlockDelayed(100)}
+							label={__('Scroll to block', 'flexible-container')}
+							className="flexible-container-scroll-btn"
+						/>
 					</div>
 					<div className="flexible-container-viewport-label">
 						{__('Editing:', 'flexible-container')} <strong>{viewportIcons[activeViewport].label}</strong>

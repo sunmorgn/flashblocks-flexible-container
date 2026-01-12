@@ -4,7 +4,7 @@
 	"apiVersion": 3,
 	"name": "flashblocks/flexible-container",
 	"version": "0.1.0",
-	"title": "Flashblocks Flexible Container",
+	"title": "Flexible Container",
 	"category": "design",
 	"icon": "move",
 	"description": "A flexible container with responsive positioning and sizing controls",
