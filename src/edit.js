@@ -3,28 +3,18 @@ import { useBlockProps, InspectorControls, InnerBlocks } from '@wordpress/block-
 import { PanelBody, TextControl, SelectControl, Button, ButtonGroup } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { desktop, tablet, mobile, search } from '@wordpress/icons';
+import { desktop, tablet, mobile, reset } from '@wordpress/icons';
 import './editor.scss';
 
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const [activeViewport, setActiveViewport] = useState('mobile');
 	
-	// Get the selectBlock action to focus the block
-	const { selectBlock } = useDispatch('core/block-editor');
-	
-	// Scroll to this block - use native focus which handles iframe scrolling
-	const scrollToBlock = () => {
-		// First deselect, then reselect to force WP to scroll to it
-		selectBlock(null);
-		setTimeout(() => {
-			selectBlock(clientId, 0); // 0 = focus position
-		}, 50);
-	};
-	
-	// Delayed scroll for after viewport transitions
-	const scrollToBlockDelayed = (delay = 600) => {
-		setTimeout(scrollToBlock, delay);
-	};
+	// Generate unique blockId if not set
+	useEffect(() => {
+		if (!attributes.blockId) {
+			setAttributes({ blockId: clientId.substring(0, 8) });
+		}
+	}, []);
 	
 	// Get the editor's current device preview mode
 	const editorDeviceType = useSelect((select) => {
@@ -71,8 +61,6 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		const mappedViewport = viewportMap[editorDeviceType];
 		if (mappedViewport && mappedViewport !== activeViewport) {
 			setActiveViewport(mappedViewport);
-			// Scroll to block after viewport animation completes
-			scrollToBlockDelayed(600);
 		}
 	}, [editorDeviceType]);
 	
@@ -80,8 +68,6 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const handleViewportChange = (viewport) => {
 		setActiveViewport(viewport);
 		syncEditorPreview(viewport);
-		// Auto-scroll to block after viewport transition completes
-		scrollToBlockDelayed(500);
 	};
 	
 	const viewportData = attributes[activeViewport];
@@ -115,6 +101,41 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		});
 	};
 
+	// Reset current viewport to default/inherited values
+	const resetViewport = () => {
+		const updates = {
+			[activeViewport]: {
+				position: '',
+				top: '',
+				right: '',
+				bottom: '',
+				left: '',
+				width: '',
+				height: '',
+				zIndex: ''
+			}
+		};
+		
+		// Also reset breakpoint to default
+		if (activeViewport === 'tablet') {
+			updates.tabletBreakpoint = '600px';
+		} else if (activeViewport === 'desktop') {
+			updates.desktopBreakpoint = '1024px';
+		}
+		
+		setAttributes(updates);
+	};
+
+	// Check if a specific viewport has any values set
+	const viewportHasValues = (viewport) => {
+		return Object.values(attributes[viewport]).some(val => val !== '');
+	};
+
+	// Check if current viewport has any values set
+	const hasAnyValues = () => {
+		return viewportHasValues(activeViewport);
+	};
+
 	// Build position options with inherited value indicator
 	const getPositionOptions = () => {
 		const baseOptions = [
@@ -130,8 +151,15 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			return [{ label: __('Default', 'flexible-container'), value: '' }, ...baseOptions];
 		}
 		
-		// For tablet/desktop, show inherited value in the "inherit" option
-		const inheritedValue = getEffectiveValue('position');
+		// For tablet/desktop, show what value would be inherited
+		let inheritedValue = '';
+		if (activeViewport === 'tablet') {
+			inheritedValue = attributes.mobile.position;
+		} else if (activeViewport === 'desktop') {
+			// Desktop inherits from tablet if set, otherwise mobile
+			inheritedValue = attributes.tablet.position || attributes.mobile.position;
+		}
+		
 		const inheritLabel = inheritedValue 
 			? `↑ ${inheritedValue.charAt(0).toUpperCase() + inheritedValue.slice(1)} (inherited)`
 			: __('↑ Default (inherited)', 'flexible-container');
@@ -148,13 +176,23 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const getInlineStyles = () => {
 		const styles = {};
 		
-		// Only apply width/height in editor - NOT position styles
-		// Position styles break WordPress's scroll-into-view behavior
+		const position = getEffectiveValue('position');
+		const top = getEffectiveValue('top');
+		const right = getEffectiveValue('right');
+		const bottom = getEffectiveValue('bottom');
+		const left = getEffectiveValue('left');
 		const width = getEffectiveValue('width');
 		const height = getEffectiveValue('height');
+		const zIndex = getEffectiveValue('zIndex');
 		
+		if (position) styles.position = position;
+		if (top) styles.top = top;
+		if (right) styles.right = right;
+		if (bottom) styles.bottom = bottom;
+		if (left) styles.left = left;
 		if (width) styles.width = width;
 		if (height) styles.height = height;
+		if (zIndex) styles.zIndex = zIndex;
 		
 		return styles;
 	};
@@ -182,18 +220,37 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 									isPressed={activeViewport === key}
 									onClick={() => handleViewportChange(key)}
 									label={label}
+									className={viewportHasValues(key) ? 'has-values' : ''}
 								/>
 							))}
 						</ButtonGroup>
-						<Button
-							icon={search}
-							onClick={() => scrollToBlockDelayed(100)}
-							label={__('Scroll to block', 'flexible-container')}
-							className="flexible-container-scroll-btn"
-						/>
 					</div>
 					<div className="flexible-container-viewport-label">
 						{__('Editing:', 'flexible-container')} <strong>{viewportIcons[activeViewport].label}</strong>
+						{activeViewport === 'tablet' && (
+							<TextControl
+								value={attributes.tabletBreakpoint}
+								onChange={(value) => setAttributes({ tabletBreakpoint: value })}
+								className="flexible-container-breakpoint-input"
+							/>
+						)}
+						{activeViewport === 'desktop' && (
+							<TextControl
+								value={attributes.desktopBreakpoint}
+								onChange={(value) => setAttributes({ desktopBreakpoint: value })}
+								className="flexible-container-breakpoint-input"
+							/>
+						)}
+						{hasAnyValues() && (
+							<Button
+								icon={reset}
+								onClick={resetViewport}
+								label={__('Reset all values', 'flexible-container')}
+								isSmall
+								isDestructive
+								className="flexible-container-reset-btn"
+							/>
+						)}
 						{activeViewport !== 'mobile' && (
 							<div className="flexible-container-inheritance-note">
 								{activeViewport === 'tablet' && __('Inherits from Mobile unless overridden', 'flexible-container')}

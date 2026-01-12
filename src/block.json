@@ -10,6 +10,18 @@
 	"description": "A flexible container with responsive positioning and sizing controls",
 	"keywords": ["container", "position", "responsive", "layout"],
 	"attributes": {
+		"blockId": {
+			"type": "string",
+			"default": ""
+		},
+		"tabletBreakpoint": {
+			"type": "string",
+			"default": "600px"
+		},
+		"desktopBreakpoint": {
+			"type": "string",
+			"default": "1024px"
+		},
 		"desktop": {
 			"type": "object",
 			"default": {
@@ -69,7 +81,5 @@
 	},
 	"textdomain": "flexible-container",
 	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css",
-	"render": "file:./render.php"
+	"editorStyle": "file:./index.css"
 }

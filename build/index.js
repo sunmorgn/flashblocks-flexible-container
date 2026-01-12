@@ -50,26 +50,26 @@ var mobile_default = /* @__PURE__ */ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODU
 
 /***/ }),
 
-/***/ "../../../../../../node_modules/@wordpress/icons/build-module/library/search.js":
-/*!**************************************************************************************!*\
-  !*** ../../../../../../node_modules/@wordpress/icons/build-module/library/search.js ***!
-  \**************************************************************************************/
+/***/ "../../../../../../node_modules/@wordpress/icons/build-module/library/reset.js":
+/*!*************************************************************************************!*\
+  !*** ../../../../../../node_modules/@wordpress/icons/build-module/library/reset.js ***!
+  \*************************************************************************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": function() { return /* binding */ search_default; }
+/* harmony export */   "default": function() { return /* binding */ reset_default; }
 /* harmony export */ });
 /* harmony import */ var _wordpress_primitives__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/primitives */ "@wordpress/primitives");
 /* harmony import */ var _wordpress_primitives__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__);
-// packages/icons/src/library/search.tsx
+// packages/icons/src/library/reset.tsx
 
 
-var search_default = /* @__PURE__ */ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_0__.SVG, { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_0__.Path, { d: "M13 5c-3.3 0-6 2.7-6 6 0 1.4.5 2.7 1.3 3.7l-3.8 3.8 1.1 1.1 3.8-3.8c1 .8 2.3 1.3 3.7 1.3 3.3 0 6-2.7 6-6S16.3 5 13 5zm0 10.5c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5z" }) });
+var reset_default = /* @__PURE__ */ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_0__.SVG, { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_0__.Path, { d: "M7 11.5h10V13H7z" }) });
 
-//# sourceMappingURL=search.js.map
+//# sourceMappingURL=reset.js.map
 
 
 /***/ }),
@@ -104,7 +104,7 @@ var tablet_default = /* @__PURE__ */ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODU
   \************************/
 /***/ (function(module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"flashblocks/flexible-container","version":"0.1.0","title":"Flexible Container","category":"design","icon":"move","description":"A flexible container with responsive positioning and sizing controls","keywords":["container","position","responsive","layout"],"attributes":{"desktop":{"type":"object","default":{"position":"","top":"","right":"","bottom":"","left":"","width":"","height":"","zIndex":""}},"tablet":{"type":"object","default":{"position":"","top":"","right":"","bottom":"","left":"","width":"","height":"","zIndex":""}},"mobile":{"type":"object","default":{"position":"","top":"","right":"","bottom":"","left":"","width":"","height":"","zIndex":""}}},"supports":{"html":false,"align":true,"color":{"background":true,"text":true,"link":true},"spacing":{"padding":true,"margin":true},"typography":{"fontSize":true,"lineHeight":true}},"textdomain":"flexible-container","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","render":"file:./render.php"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"flashblocks/flexible-container","version":"0.1.0","title":"Flexible Container","category":"design","icon":"move","description":"A flexible container with responsive positioning and sizing controls","keywords":["container","position","responsive","layout"],"attributes":{"blockId":{"type":"string","default":""},"tabletBreakpoint":{"type":"string","default":"600px"},"desktopBreakpoint":{"type":"string","default":"1024px"},"desktop":{"type":"object","default":{"position":"","top":"","right":"","bottom":"","left":"","width":"","height":"","zIndex":""}},"tablet":{"type":"object","default":{"position":"","top":"","right":"","bottom":"","left":"","width":"","height":"","zIndex":""}},"mobile":{"type":"object","default":{"position":"","top":"","right":"","bottom":"","left":"","width":"","height":"","zIndex":""}}},"supports":{"html":false,"align":true,"color":{"background":true,"text":true,"link":true},"spacing":{"padding":true,"margin":true},"typography":{"fontSize":true,"lineHeight":true}},"textdomain":"flexible-container","editorScript":"file:./index.js","editorStyle":"file:./index.css"}');
 
 /***/ }),
 
@@ -130,7 +130,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/icons */ "../../../../../../node_modules/@wordpress/icons/build-module/library/desktop.js");
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/icons */ "../../../../../../node_modules/@wordpress/icons/build-module/library/mobile.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/icons */ "../../../../../../node_modules/@wordpress/icons/build-module/library/search.js");
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/icons */ "../../../../../../node_modules/@wordpress/icons/build-module/library/reset.js");
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/icons */ "../../../../../../node_modules/@wordpress/icons/build-module/library/tablet.js");
 /* harmony import */ var _editor_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./editor.scss */ "./src/editor.scss");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
@@ -150,24 +150,14 @@ function Edit({
 }) {
   const [activeViewport, setActiveViewport] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_3__.useState)('mobile');
 
-  // Get the selectBlock action to focus the block
-  const {
-    selectBlock
-  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useDispatch)('core/block-editor');
-
-  // Scroll to this block - use native focus which handles iframe scrolling
-  const scrollToBlock = () => {
-    // First deselect, then reselect to force WP to scroll to it
-    selectBlock(null);
-    setTimeout(() => {
-      selectBlock(clientId, 0); // 0 = focus position
-    }, 50);
-  };
-
-  // Delayed scroll for after viewport transitions
-  const scrollToBlockDelayed = (delay = 600) => {
-    setTimeout(scrollToBlock, delay);
-  };
+  // Generate unique blockId if not set
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_3__.useEffect)(() => {
+    if (!attributes.blockId) {
+      setAttributes({
+        blockId: clientId.substring(0, 8)
+      });
+    }
+  }, []);
 
   // Get the editor's current device preview mode
   const editorDeviceType = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useSelect)(select => {
@@ -217,8 +207,6 @@ function Edit({
     const mappedViewport = viewportMap[editorDeviceType];
     if (mappedViewport && mappedViewport !== activeViewport) {
       setActiveViewport(mappedViewport);
-      // Scroll to block after viewport animation completes
-      scrollToBlockDelayed(600);
     }
   }, [editorDeviceType]);
 
@@ -226,8 +214,6 @@ function Edit({
   const handleViewportChange = viewport => {
     setActiveViewport(viewport);
     syncEditorPreview(viewport);
-    // Auto-scroll to block after viewport transition completes
-    scrollToBlockDelayed(500);
   };
   const viewportData = attributes[activeViewport];
 
@@ -259,6 +245,40 @@ function Edit({
     });
   };
 
+  // Reset current viewport to default/inherited values
+  const resetViewport = () => {
+    const updates = {
+      [activeViewport]: {
+        position: '',
+        top: '',
+        right: '',
+        bottom: '',
+        left: '',
+        width: '',
+        height: '',
+        zIndex: ''
+      }
+    };
+
+    // Also reset breakpoint to default
+    if (activeViewport === 'tablet') {
+      updates.tabletBreakpoint = '600px';
+    } else if (activeViewport === 'desktop') {
+      updates.desktopBreakpoint = '1024px';
+    }
+    setAttributes(updates);
+  };
+
+  // Check if a specific viewport has any values set
+  const viewportHasValues = viewport => {
+    return Object.values(attributes[viewport]).some(val => val !== '');
+  };
+
+  // Check if current viewport has any values set
+  const hasAnyValues = () => {
+    return viewportHasValues(activeViewport);
+  };
+
   // Build position options with inherited value indicator
   const getPositionOptions = () => {
     const baseOptions = [{
@@ -286,8 +306,14 @@ function Edit({
       }, ...baseOptions];
     }
 
-    // For tablet/desktop, show inherited value in the "inherit" option
-    const inheritedValue = getEffectiveValue('position');
+    // For tablet/desktop, show what value would be inherited
+    let inheritedValue = '';
+    if (activeViewport === 'tablet') {
+      inheritedValue = attributes.mobile.position;
+    } else if (activeViewport === 'desktop') {
+      // Desktop inherits from tablet if set, otherwise mobile
+      inheritedValue = attributes.tablet.position || attributes.mobile.position;
+    }
     const inheritLabel = inheritedValue ? `↑ ${inheritedValue.charAt(0).toUpperCase() + inheritedValue.slice(1)} (inherited)` : (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('↑ Default (inherited)', 'flexible-container');
     return [{
       label: inheritLabel,
@@ -310,13 +336,22 @@ function Edit({
   };
   const getInlineStyles = () => {
     const styles = {};
-
-    // Only apply width/height in editor - NOT position styles
-    // Position styles break WordPress's scroll-into-view behavior
+    const position = getEffectiveValue('position');
+    const top = getEffectiveValue('top');
+    const right = getEffectiveValue('right');
+    const bottom = getEffectiveValue('bottom');
+    const left = getEffectiveValue('left');
     const width = getEffectiveValue('width');
     const height = getEffectiveValue('height');
+    const zIndex = getEffectiveValue('zIndex');
+    if (position) styles.position = position;
+    if (top) styles.top = top;
+    if (right) styles.right = right;
+    if (bottom) styles.bottom = bottom;
+    if (left) styles.left = left;
     if (width) styles.width = width;
     if (height) styles.height = height;
+    if (zIndex) styles.zIndex = zIndex;
     return styles;
   };
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)({
@@ -332,9 +367,9 @@ function Edit({
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
         className: "flexible-container-viewport-controls",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
           className: "flexible-container-viewport-tabs",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ButtonGroup, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ButtonGroup, {
             children: Object.entries(viewportIcons).map(([key, {
               icon,
               label
@@ -342,18 +377,33 @@ function Edit({
               icon: icon,
               isPressed: activeViewport === key,
               onClick: () => handleViewportChange(key),
-              label: label
+              label: label,
+              className: viewportHasValues(key) ? 'has-values' : ''
             }, key))
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
-            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_7__["default"],
-            onClick: () => scrollToBlockDelayed(100),
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Scroll to block', 'flexible-container'),
-            className: "flexible-container-scroll-btn"
-          })]
+          })
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
           className: "flexible-container-viewport-label",
           children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Editing:', 'flexible-container'), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("strong", {
             children: viewportIcons[activeViewport].label
+          }), activeViewport === 'tablet' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+            value: attributes.tabletBreakpoint,
+            onChange: value => setAttributes({
+              tabletBreakpoint: value
+            }),
+            className: "flexible-container-breakpoint-input"
+          }), activeViewport === 'desktop' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+            value: attributes.desktopBreakpoint,
+            onChange: value => setAttributes({
+              desktopBreakpoint: value
+            }),
+            className: "flexible-container-breakpoint-input"
+          }), hasAnyValues() && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_7__["default"],
+            onClick: resetViewport,
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Reset all values', 'flexible-container'),
+            isSmall: true,
+            isDestructive: true,
+            className: "flexible-container-reset-btn"
           }), activeViewport !== 'mobile' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
             className: "flexible-container-inheritance-note",
             children: [activeViewport === 'tablet' && (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Inherits from Mobile unless overridden', 'flexible-container'), activeViewport === 'desktop' && (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Inherits from Tablet/Mobile unless overridden', 'flexible-container')]
@@ -444,31 +494,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/index.js":
-/*!**********************!*\
-  !*** ./src/index.js ***!
-  \**********************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./save */ "./src/save.js");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./block.json */ "./src/block.json");
-
-
-
-
-
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_4__.name, {
-  edit: _edit__WEBPACK_IMPORTED_MODULE_2__["default"],
-  save: _save__WEBPACK_IMPORTED_MODULE_3__["default"]
-});
-
-/***/ }),
-
 /***/ "./src/save.js":
 /*!*********************!*\
   !*** ./src/save.js ***!
@@ -485,21 +510,54 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__);
 
 
-function save() {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.InnerBlocks.Content, {});
+// Convert camelCase to kebab-case
+
+const toKebab = str => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+function save({
+  attributes
+}) {
+  const {
+    mobile,
+    tablet,
+    desktop,
+    tabletBreakpoint,
+    desktopBreakpoint,
+    blockId
+  } = attributes;
+  const props = ['position', 'top', 'right', 'bottom', 'left', 'width', 'height', 'zIndex'];
+
+  // Build CSS for each breakpoint
+  const buildStyles = values => {
+    return props.filter(prop => values[prop]).map(prop => `${toKebab(prop)}: ${values[prop]}`).join('; ');
+  };
+  const mobileStyles = buildStyles(mobile);
+  const tabletStyles = buildStyles(tablet);
+  const desktopStyles = buildStyles(desktop);
+
+  // Build the style tag content
+  let styleContent = '';
+  const selector = `.fc-${blockId}`;
+  if (mobileStyles) {
+    styleContent += `${selector} { ${mobileStyles}; }`;
+  }
+  if (tabletStyles) {
+    styleContent += `@media (min-width: ${tabletBreakpoint}) { ${selector} { ${tabletStyles}; } }`;
+  }
+  if (desktopStyles) {
+    styleContent += `@media (min-width: ${desktopBreakpoint}) { ${selector} { ${desktopStyles}; } }`;
+  }
+  const blockProps = _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.useBlockProps.save({
+    className: `fc-${blockId}`
+  });
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.Fragment, {
+    children: [styleContent && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("style", {
+      children: styleContent
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+      ...blockProps,
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.InnerBlocks.Content, {})
+    })]
+  });
 }
-
-/***/ }),
-
-/***/ "./src/style.scss":
-/*!************************!*\
-  !*** ./src/style.scss ***!
-  \************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
 
 /***/ }),
 
@@ -615,44 +673,7 @@ module.exports = window["ReactJSXRuntime"];
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = __webpack_modules__;
-/******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/chunk loaded */
-/******/ 	!function() {
-/******/ 		var deferred = [];
-/******/ 		__webpack_require__.O = function(result, chunkIds, fn, priority) {
-/******/ 			if(chunkIds) {
-/******/ 				priority = priority || 0;
-/******/ 				for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
-/******/ 				deferred[i] = [chunkIds, fn, priority];
-/******/ 				return;
-/******/ 			}
-/******/ 			var notFulfilled = Infinity;
-/******/ 			for (var i = 0; i < deferred.length; i++) {
-/******/ 				var chunkIds = deferred[i][0];
-/******/ 				var fn = deferred[i][1];
-/******/ 				var priority = deferred[i][2];
-/******/ 				var fulfilled = true;
-/******/ 				for (var j = 0; j < chunkIds.length; j++) {
-/******/ 					if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every(function(key) { return __webpack_require__.O[key](chunkIds[j]); })) {
-/******/ 						chunkIds.splice(j--, 1);
-/******/ 					} else {
-/******/ 						fulfilled = false;
-/******/ 						if(priority < notFulfilled) notFulfilled = priority;
-/******/ 					}
-/******/ 				}
-/******/ 				if(fulfilled) {
-/******/ 					deferred.splice(i--, 1)
-/******/ 					var r = fn();
-/******/ 					if (r !== undefined) result = r;
-/******/ 				}
-/******/ 			}
-/******/ 			return result;
-/******/ 		};
-/******/ 	}();
-/******/ 	
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	!function() {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules
@@ -693,70 +714,28 @@ module.exports = window["ReactJSXRuntime"];
 /******/ 		};
 /******/ 	}();
 /******/ 	
-/******/ 	/* webpack/runtime/jsonp chunk loading */
-/******/ 	!function() {
-/******/ 		// no baseURI
-/******/ 		
-/******/ 		// object to store loaded and loading chunks
-/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
-/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
-/******/ 		var installedChunks = {
-/******/ 			"index": 0,
-/******/ 			"./style-index": 0
-/******/ 		};
-/******/ 		
-/******/ 		// no chunk on demand loading
-/******/ 		
-/******/ 		// no prefetching
-/******/ 		
-/******/ 		// no preloaded
-/******/ 		
-/******/ 		// no HMR
-/******/ 		
-/******/ 		// no HMR manifest
-/******/ 		
-/******/ 		__webpack_require__.O.j = function(chunkId) { return installedChunks[chunkId] === 0; };
-/******/ 		
-/******/ 		// install a JSONP callback for chunk loading
-/******/ 		var webpackJsonpCallback = function(parentChunkLoadingFunction, data) {
-/******/ 			var chunkIds = data[0];
-/******/ 			var moreModules = data[1];
-/******/ 			var runtime = data[2];
-/******/ 			// add "moreModules" to the modules object,
-/******/ 			// then flag all "chunkIds" as loaded and fire callback
-/******/ 			var moduleId, chunkId, i = 0;
-/******/ 			if(chunkIds.some(function(id) { return installedChunks[id] !== 0; })) {
-/******/ 				for(moduleId in moreModules) {
-/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
-/******/ 					}
-/******/ 				}
-/******/ 				if(runtime) var result = runtime(__webpack_require__);
-/******/ 			}
-/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
-/******/ 			for(;i < chunkIds.length; i++) {
-/******/ 				chunkId = chunkIds[i];
-/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
-/******/ 					installedChunks[chunkId][0]();
-/******/ 				}
-/******/ 				installedChunks[chunkId] = 0;
-/******/ 			}
-/******/ 			return __webpack_require__.O(result);
-/******/ 		}
-/******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunkflexible_container"] = self["webpackChunkflexible_container"] || [];
-/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
-/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
-/******/ 	}();
-/******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["./style-index"], function() { return __webpack_require__("./src/index.js"); })
-/******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
-/******/ 	
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+!function() {
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./save */ "./src/save.js");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./block.json */ "./src/block.json");
+
+
+
+
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_3__.name, {
+  edit: _edit__WEBPACK_IMPORTED_MODULE_1__["default"],
+  save: _save__WEBPACK_IMPORTED_MODULE_2__["default"]
+});
+}();
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map

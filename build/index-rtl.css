@@ -37,6 +37,22 @@
 .flexible-container-viewport-tabs .components-button {
   flex: 1;
   justify-content: center;
+  position: relative;
+}
+.flexible-container-viewport-tabs .components-button.has-values::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 6px;
+  height: 6px;
+  background: #007cba;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+.flexible-container-viewport-tabs .components-button.is-pressed.has-values::after {
+  background: #fff;
 }
 .flexible-container-viewport-tabs .flexible-container-scroll-btn {
   flex: 0 0 auto;
@@ -46,9 +62,25 @@
   padding: 8px 0 0;
   font-size: 13px;
   color: #757575;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .flexible-container-viewport-label strong {
   color: #1e1e1e;
+}
+.flexible-container-viewport-label .flexible-container-breakpoint-input {
+  margin: 0;
+}
+.flexible-container-viewport-label .flexible-container-breakpoint-input input {
+  width: 70px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-family: monospace;
+}
+.flexible-container-viewport-label .flexible-container-reset-btn {
+  margin-right: auto;
 }
 .flexible-container-inheritance-note {
   margin-top: 6px;

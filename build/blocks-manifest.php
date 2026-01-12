@@ -17,6 +17,18 @@ return array(
 			'layout'
 		),
 		'attributes' => array(
+			'blockId' => array(
+				'type' => 'string',
+				'default' => ''
+			),
+			'tabletBreakpoint' => array(
+				'type' => 'string',
+				'default' => '600px'
+			),
+			'desktopBreakpoint' => array(
+				'type' => 'string',
+				'default' => '1024px'
+			),
 			'desktop' => array(
 				'type' => 'object',
 				'default' => array(
@@ -76,8 +88,6 @@ return array(
 		),
 		'textdomain' => 'flexible-container',
 		'editorScript' => 'file:./index.js',
-		'editorStyle' => 'file:./index.css',
-		'style' => 'file:./style-index.css',
-		'render' => 'file:./render.php'
+		'editorStyle' => 'file:./index.css'
 	)
 );
