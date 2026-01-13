@@ -5,7 +5,7 @@ const toKebab = (str) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
 export default function save({ attributes }) {
 	const { mobile, tablet, desktop, tabletBreakpoint, desktopBreakpoint, blockId } = attributes;
-	const props = ['position', 'top', 'right', 'bottom', 'left', 'width', 'height', 'zIndex'];
+	const props = ['display', 'position', 'top', 'right', 'bottom', 'left', 'width', 'height', 'zIndex'];
 	
 	// Build CSS for each breakpoint
 	const buildStyles = (values) => {

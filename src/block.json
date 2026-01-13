@@ -25,6 +25,7 @@
 		"desktop": {
 			"type": "object",
 			"default": {
+				"display": "",
 				"position": "",
 				"top": "",
 				"right": "",
@@ -38,6 +39,7 @@
 		"tablet": {
 			"type": "object",
 			"default": {
+				"display": "",
 				"position": "",
 				"top": "",
 				"right": "",
@@ -51,6 +53,7 @@
 		"mobile": {
 			"type": "object",
 			"default": {
+				"display": "",
 				"position": "",
 				"top": "",
 				"right": "",
@@ -63,7 +66,12 @@
 		}
 	},
 	"supports": {
-		"html": false,
+		"ariaLabel": true,
+		"inserter": true,
+		"anchor": true,
+		"className": true,
+		"customClassName": true,
+		"html": true,
 		"align": true,
 		"color": {
 			"background": true,
@@ -76,7 +84,16 @@
 		},
 		"typography": {
 			"fontSize": true,
-			"lineHeight": true
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
 		}
 	},
 	"textdomain": "flexible-container",

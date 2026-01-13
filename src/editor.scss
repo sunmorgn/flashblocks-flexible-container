@@ -7,7 +7,6 @@
 		outline-width: 2px;
 	}
 	
-	/* Ensure empty blocks remain visible */
 	&:empty::before {
 		content: '';
 		display: block;
@@ -16,55 +15,33 @@
 }
 
 .flexible-container-viewport-controls {
-	padding: 16px;
-	background: #f0f0f0;
+	margin-bottom: 16px;
+	padding-bottom: 16px;
 	border-bottom: 1px solid #ddd;
-	margin: 0 -16px 16px -16px;
 }
 
 .flexible-container-viewport-tabs {
 	margin-bottom: 12px;
-	display: flex;
-	align-items: center;
-	gap: 8px;
 	
-	.components-button-group {
-		flex: 1;
-		display: flex;
-		justify-content: space-between;
+	.has-values::after {
+		content: '';
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		width: 6px;
+		height: 6px;
+		background: #007cba;
+		border-radius: 50%;
+		pointer-events: none;
+		z-index: 1;
 	}
 	
-	.components-button {
-		flex: 1;
-		justify-content: center;
-		position: relative;
-		
-		&.has-values::after {
-			content: '';
-			position: absolute;
-			top: 4px;
-			right: 4px;
-			width: 6px;
-			height: 6px;
-			background: #007cba;
-			border-radius: 50%;
-			pointer-events: none;
-			z-index: 1;
-		}
-		
-		&.is-pressed.has-values::after {
-			background: #fff;
-		}
-	}
-	
-	.flexible-container-scroll-btn {
-		flex: 0 0 auto;
-		margin-left: 8px;
+	[data-active-item="true"].has-values::after {
+		background: #fff;
 	}
 }
 
 .flexible-container-viewport-label {
-	padding: 8px 0 0;
 	font-size: 13px;
 	color: #757575;
 	display: flex;
@@ -78,6 +55,7 @@
 	
 	.flexible-container-breakpoint-input {
 		margin: 0;
+		flex-shrink: 0;
 		
 		input {
 			width: 70px;
@@ -89,11 +67,12 @@
 	
 	.flexible-container-reset-btn {
 		margin-left: auto;
+		flex-shrink: 0;
 	}
 }
 
 .flexible-container-inheritance-note {
-	margin-top: 6px;
+	flex-basis: 100%;
 	font-size: 11px;
 	color: #007cba;
 	font-style: italic;
@@ -110,11 +89,6 @@
 		.components-select-control__input {
 			background-color: #f0f6fc;
 			border-color: #c3e0f7;
-		}
-		
-		.components-base-control__help {
-			color: #007cba;
-			font-style: italic;
 		}
 	}
 }
