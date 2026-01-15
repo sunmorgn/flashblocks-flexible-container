@@ -70,6 +70,7 @@
     "align": true,
     "color": {
       "background": true,
+      "gradients": true,
       "text": true,
       "link": true
     },
