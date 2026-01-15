@@ -9,7 +9,8 @@ const PROP_TO_VAR = {
 	left: '--fc-left',
 	width: '--fc-width',
 	height: '--fc-height',
-	zIndex: '--fc-z-index'
+	zIndex: '--fc-z-index',
+	transform: '--fc-transform'
 };
 
 export default function save({ attributes }) {

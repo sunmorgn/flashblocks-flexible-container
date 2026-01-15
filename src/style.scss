@@ -12,6 +12,7 @@
 	width: var(--fc-width);
 	height: var(--fc-height);
 	z-index: var(--fc-z-index);
+	transform: var(--fc-transform);
 }
 
 // Tablet: override with tablet values if set
@@ -26,6 +27,7 @@
 		width: var(--fc-width-tablet, var(--fc-width));
 		height: var(--fc-height-tablet, var(--fc-height));
 		z-index: var(--fc-z-index-tablet, var(--fc-z-index));
+		transform: var(--fc-transform-tablet, var(--fc-transform));
 	}
 }
 
@@ -41,5 +43,6 @@
 		width: var(--fc-width-desktop, var(--fc-width-tablet, var(--fc-width)));
 		height: var(--fc-height-desktop, var(--fc-height-tablet, var(--fc-height)));
 		z-index: var(--fc-z-index-desktop, var(--fc-z-index-tablet, var(--fc-z-index)));
+		transform: var(--fc-transform-desktop, var(--fc-transform-tablet, var(--fc-transform)));
 	}
 }

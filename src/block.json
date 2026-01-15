@@ -21,7 +21,8 @@
 				"left": "",
 				"width": "",
 				"height": "",
-				"zIndex": ""
+				"zIndex": "",
+				"transform": ""
 			}
 		},
 		"tablet": {
@@ -35,7 +36,8 @@
 				"left": "",
 				"width": "",
 				"height": "",
-				"zIndex": ""
+				"zIndex": "",
+				"transform": ""
 			}
 		},
 		"mobile": {
@@ -49,7 +51,8 @@
 				"left": "",
 				"width": "",
 				"height": "",
-				"zIndex": ""
+				"zIndex": "",
+				"transform": ""
 			}
 		}
 	},

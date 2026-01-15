@@ -13,7 +13,7 @@ const VIEWPORTS = {
 	desktop: { icon: desktop, label: 'Desktop', breakpoint: '1024px' }
 };
 
-const PROPS = ['display', 'position', 'top', 'right', 'bottom', 'left', 'width', 'height', 'zIndex'];
+const PROPS = ['display', 'position', 'top', 'right', 'bottom', 'left', 'width', 'height', 'zIndex', 'transform'];
 
 const EMPTY_VIEWPORT = Object.fromEntries(PROPS.map(p => [p, '']));
 
@@ -190,6 +190,7 @@ export default function Edit({ attributes, setAttributes }) {
 					<Field label="Bottom" prop="bottom" />
 					<Field label="Left" prop="left" />
 					<Field label="Z-Index" prop="zIndex" />
+					<Field label="Transform" prop="transform" />
 				</PanelBody>
 
 				<PanelBody title={__('Dimensions', 'flexible-container')} initialOpen={true}>
