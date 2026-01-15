@@ -22,8 +22,12 @@
 
 .flexible-container-viewport-tabs {
 	margin-bottom: 12px;
-	
-	.has-values::after {
+
+	.components-button {
+		position: relative;
+	}
+
+	.components-button.has-values::after {
 		content: '';
 		position: absolute;
 		top: 4px;
@@ -35,8 +39,8 @@
 		pointer-events: none;
 		z-index: 1;
 	}
-	
-	[data-active-item="true"].has-values::after {
+
+	.components-button.is-pressed.has-values::after {
 		background: #fff;
 	}
 }

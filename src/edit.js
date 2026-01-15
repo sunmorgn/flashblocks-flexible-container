@@ -1,20 +1,22 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls, InnerBlocks } from '@wordpress/block-editor';
-import { PanelBody, TextControl, SelectControl, Button, __experimentalToggleGroupControl as ToggleGroupControl, __experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon } from '@wordpress/components';
-import { useState, useEffect } from '@wordpress/element';
+import { PanelBody, TextControl, SelectControl, Button, ButtonGroup } from '@wordpress/components';
+import { useState, useEffect, useRef } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { desktop, tablet, mobile, reset } from '@wordpress/icons';
 import './editor.scss';
 
 export default function Edit({ attributes, setAttributes, clientId }) {
-	const [activeViewport, setActiveViewport] = useState('mobile');
+	const [activeViewport, setActiveViewport] = useState('desktop');
+	const skipNextSync = useRef(false);
 	
-	// Generate unique blockId if not set
+	// Generate unique blockId based on clientId (handles copies getting new IDs)
 	useEffect(() => {
-		if (!attributes.blockId) {
-			setAttributes({ blockId: clientId.substring(0, 8) });
+		const expectedId = clientId.substring(0, 8);
+		if (attributes.blockId !== expectedId) {
+			setAttributes({ blockId: expectedId });
 		}
-	}, []);
+	}, [clientId]);
 	
 	// Get the editor's current device preview mode
 	const editorDeviceType = useSelect((select) => {
@@ -53,6 +55,12 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	
 	// Sync our tabs when editor preview changes (from WP toolbar)
 	useEffect(() => {
+		// Skip if we triggered this change ourselves (toggle without changing tab)
+		if (skipNextSync.current) {
+			skipNextSync.current = false;
+			return;
+		}
+
 		const viewportMap = {
 			'Mobile': 'mobile',
 			'Tablet': 'tablet',
@@ -66,8 +74,28 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	
 	// Handle tab click - update both local state and editor preview
 	const handleViewportChange = (viewport) => {
-		setActiveViewport(viewport);
-		syncEditorPreview(viewport);
+		const deviceMap = {
+			mobile: 'Mobile',
+			tablet: 'Tablet',
+			desktop: 'Desktop'
+		};
+
+		if (viewport === activeViewport) {
+			// Clicking same tab - toggle preview between this viewport and Desktop
+			// Skip the next sync so our tab doesn't change
+			skipNextSync.current = true;
+			if (editorDeviceType === deviceMap[viewport]) {
+				// Preview matches tab - switch to Desktop preview
+				syncEditorPreview('desktop');
+			} else {
+				// Preview is Desktop - switch to this viewport's preview
+				syncEditorPreview(viewport);
+			}
+		} else {
+			// Clicking different tab - select it and sync preview
+			setActiveViewport(viewport);
+			syncEditorPreview(viewport);
+		}
 	};
 	
 	const viewportData = attributes[activeViewport];
@@ -246,22 +274,18 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				<PanelBody title={__('Responsive', 'flexible-container')} initialOpen={true}>
 					<div className="flexible-container-viewport-controls">
 						<div className="flexible-container-viewport-tabs">
-							<ToggleGroupControl
-								value={activeViewport}
-								onChange={handleViewportChange}
-								isBlock
-								__nextHasNoMarginBottom
-							>
+							<ButtonGroup>
 								{Object.entries(viewportIcons).map(([key, { icon, label }]) => (
-									<ToggleGroupControlOptionIcon
+									<Button
 										key={key}
-										value={key}
 										icon={icon}
 										label={label}
+										isPressed={activeViewport === key}
+										onClick={() => handleViewportChange(key)}
 										className={viewportHasValues(key) ? 'has-values' : ''}
 									/>
 								))}
-							</ToggleGroupControl>
+							</ButtonGroup>
 						</div>
 						<div className="flexible-container-viewport-label">
 							{__('Editing:', 'flexible-container')} <strong>{viewportIcons[activeViewport].label}</strong>
