@@ -25,6 +25,22 @@ const OPTIONS = {
 	position: ['static', 'relative', 'absolute', 'fixed', 'sticky']
 };
 
+// Field component - defined outside to prevent focus loss on re-render
+const Field = ({ label, value, onChange, isInherited, placeholder, type, options }) => {
+	const commonProps = {
+		label: __(label, 'flexible-container'),
+		value,
+		onChange,
+		className: isInherited ? 'is-inherited' : ''
+	};
+
+	return type === 'select' ? (
+		<SelectControl {...commonProps} options={options} />
+	) : (
+		<TextControl {...commonProps} placeholder={isInherited ? placeholder || 'inherited' : ''} />
+	);
+};
+
 export default function Edit({ attributes, setAttributes }) {
 	const [activeViewport, setActiveViewport] = useState('desktop');
 	const skipNextSync = useRef(false);
@@ -118,22 +134,15 @@ export default function Edit({ attributes, setAttributes }) {
 		style: getInlineStyles()
 	});
 
-	// Reusable field component
-	const Field = ({ label, prop, type = 'text', options }) => {
-		const isInherited = !hasOverride(prop) && activeViewport !== 'mobile';
-		const commonProps = {
-			label: __(label, 'flexible-container'),
-			value: viewportData[prop],
-			onChange: (v) => updateAttr(prop, v),
-			className: isInherited ? 'is-inherited' : ''
-		};
-
-		return type === 'select' ? (
-			<SelectControl {...commonProps} options={options} />
-		) : (
-			<TextControl {...commonProps} placeholder={isInherited ? getEffectiveValue(prop) || 'inherited' : ''} />
-		);
-	};
+	// Helper to generate Field props
+	const fieldProps = (prop, type, options) => ({
+		value: viewportData[prop],
+		onChange: (v) => updateAttr(prop, v),
+		isInherited: !hasOverride(prop) && activeViewport !== 'mobile',
+		placeholder: getEffectiveValue(prop),
+		type,
+		options
+	});
 
 	return (
 		<>
@@ -180,22 +189,22 @@ export default function Edit({ attributes, setAttributes }) {
 				</PanelBody>
 
 				<PanelBody title={__('Display', 'flexible-container')} initialOpen={true}>
-					<Field label="Display" prop="display" type="select" options={buildOptions('display')} />
+					<Field label="Display" {...fieldProps('display', 'select', buildOptions('display'))} />
 				</PanelBody>
 
 				<PanelBody title={__('Position', 'flexible-container')}>
-					<Field label="Position Type" prop="position" type="select" options={buildOptions('position')} />
-					<Field label="Top" prop="top" />
-					<Field label="Right" prop="right" />
-					<Field label="Bottom" prop="bottom" />
-					<Field label="Left" prop="left" />
-					<Field label="Z-Index" prop="zIndex" />
-					<Field label="Transform" prop="transform" />
+					<Field label="Position Type" {...fieldProps('position', 'select', buildOptions('position'))} />
+					<Field label="Top" {...fieldProps('top')} />
+					<Field label="Right" {...fieldProps('right')} />
+					<Field label="Bottom" {...fieldProps('bottom')} />
+					<Field label="Left" {...fieldProps('left')} />
+					<Field label="Z-Index" {...fieldProps('zIndex')} />
+					<Field label="Transform" {...fieldProps('transform')} />
 				</PanelBody>
 
 				<PanelBody title={__('Dimensions', 'flexible-container')} initialOpen={true}>
-					<Field label="Width" prop="width" />
-					<Field label="Height" prop="height" />
+					<Field label="Width" {...fieldProps('width')} />
+					<Field label="Height" {...fieldProps('height')} />
 				</PanelBody>
 			</InspectorControls>
 
