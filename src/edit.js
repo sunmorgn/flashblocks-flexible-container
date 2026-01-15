@@ -6,266 +6,133 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { desktop, tablet, mobile, reset } from '@wordpress/icons';
 import './editor.scss';
 
-export default function Edit({ attributes, setAttributes, clientId }) {
+// Constants
+const VIEWPORTS = {
+	mobile: { icon: mobile, label: 'Mobile', breakpoint: null },
+	tablet: { icon: tablet, label: 'Tablet', breakpoint: '600px' },
+	desktop: { icon: desktop, label: 'Desktop', breakpoint: '1024px' }
+};
+
+const PROPS = ['display', 'position', 'top', 'right', 'bottom', 'left', 'width', 'height', 'zIndex'];
+
+const EMPTY_VIEWPORT = Object.fromEntries(PROPS.map(p => [p, '']));
+
+const toDeviceType = (viewport) => viewport.charAt(0).toUpperCase() + viewport.slice(1);
+const toViewport = (deviceType) => deviceType.toLowerCase();
+
+const OPTIONS = {
+	display: ['block', 'flex', 'grid', 'inline', 'inline-block', 'inline-flex', 'none'],
+	position: ['static', 'relative', 'absolute', 'fixed', 'sticky']
+};
+
+export default function Edit({ attributes, setAttributes }) {
 	const [activeViewport, setActiveViewport] = useState('desktop');
 	const skipNextSync = useRef(false);
-	
-	// Generate unique blockId based on clientId (handles copies getting new IDs)
-	useEffect(() => {
-		const expectedId = clientId.substring(0, 8);
-		if (attributes.blockId !== expectedId) {
-			setAttributes({ blockId: expectedId });
-		}
-	}, [clientId]);
-	
-	// Get the editor's current device preview mode
+
+	// Get/set editor device preview
 	const editorDeviceType = useSelect((select) => {
-		// Try the edit-post store first (classic editor structure)
 		const editPost = select('core/edit-post');
 		if (editPost?.__experimentalGetPreviewDeviceType) {
 			return editPost.__experimentalGetPreviewDeviceType();
 		}
-		// Fall back to editor store (newer/site editor)
-		const editor = select('core/editor');
-		if (editor?.getDeviceType) {
-			return editor.getDeviceType();
-		}
-		return 'Desktop';
+		return select('core/editor')?.getDeviceType?.() || 'Desktop';
 	}, []);
-	
-	// Get dispatch to set the editor's device preview
+
 	const { __experimentalSetPreviewDeviceType: setEditPostDeviceType } = useDispatch('core/edit-post') || {};
 	const { setDeviceType: setEditorDeviceType } = useDispatch('core/editor') || {};
-	
-	// Sync editor preview when our tabs change
+
 	const syncEditorPreview = (viewport) => {
-		const deviceMap = {
-			mobile: 'Mobile',
-			tablet: 'Tablet', 
-			desktop: 'Desktop'
-		};
-		const deviceType = deviceMap[viewport];
-		
-		if (setEditPostDeviceType) {
-			setEditPostDeviceType(deviceType);
-		} else if (setEditorDeviceType) {
-			setEditorDeviceType(deviceType);
-		}
+		const deviceType = toDeviceType(viewport);
+		(setEditPostDeviceType || setEditorDeviceType)?.(deviceType);
 	};
-	
-	// Sync our tabs when editor preview changes (from WP toolbar)
+
+	// Sync tabs when editor preview changes
 	useEffect(() => {
-		// Skip if we triggered this change ourselves (toggle without changing tab)
 		if (skipNextSync.current) {
 			skipNextSync.current = false;
 			return;
 		}
-
-		const viewportMap = {
-			'Mobile': 'mobile',
-			'Tablet': 'tablet',
-			'Desktop': 'desktop'
-		};
-		const mappedViewport = viewportMap[editorDeviceType];
-		if (mappedViewport && mappedViewport !== activeViewport) {
-			setActiveViewport(mappedViewport);
+		const mapped = toViewport(editorDeviceType);
+		if (mapped !== activeViewport) {
+			setActiveViewport(mapped);
 		}
 	}, [editorDeviceType]);
-	
-	// Handle tab click - update both local state and editor preview
-	const handleViewportChange = (viewport) => {
-		const deviceMap = {
-			mobile: 'Mobile',
-			tablet: 'Tablet',
-			desktop: 'Desktop'
-		};
 
+	// Handle viewport tab click
+	const handleViewportChange = (viewport) => {
 		if (viewport === activeViewport) {
-			// Clicking same tab - toggle preview between this viewport and Desktop
-			// Skip the next sync so our tab doesn't change
 			skipNextSync.current = true;
-			if (editorDeviceType === deviceMap[viewport]) {
-				// Preview matches tab - switch to Desktop preview
-				syncEditorPreview('desktop');
-			} else {
-				// Preview is Desktop - switch to this viewport's preview
-				syncEditorPreview(viewport);
-			}
+			const issynced = editorDeviceType === toDeviceType(viewport);
+			syncEditorPreview(issynced ? 'desktop' : viewport);
 		} else {
-			// Clicking different tab - select it and sync preview
 			setActiveViewport(viewport);
 			syncEditorPreview(viewport);
 		}
 	};
-	
-	const viewportData = attributes[activeViewport];
-	
-	// Get effective value with inheritance: desktop inherits from tablet, tablet inherits from mobile
-	const getEffectiveValue = (key) => {
-		if (activeViewport === 'mobile') {
-			return attributes.mobile[key];
-		}
-		if (activeViewport === 'tablet') {
-			// If tablet has a value, use it, otherwise inherit from mobile
-			return attributes.tablet[key] !== '' ? attributes.tablet[key] : attributes.mobile[key];
-		}
-		if (activeViewport === 'desktop') {
-			// If desktop has a value, use it
-			if (attributes.desktop[key] !== '') return attributes.desktop[key];
-			// Otherwise check tablet
-			if (attributes.tablet[key] !== '') return attributes.tablet[key];
-			// Finally fall back to mobile
-			return attributes.mobile[key];
-		}
+
+	// Inheritance helpers
+	const getInheritedValue = (key) => {
+		if (activeViewport === 'tablet') return attributes.mobile[key];
+		if (activeViewport === 'desktop') return attributes.tablet[key] || attributes.mobile[key];
 		return '';
 	};
-	
-	const updateViewportAttribute = (key, value) => {
-		setAttributes({
-			[activeViewport]: {
-				...viewportData,
-				[key]: value
-			}
-		});
+
+	const getEffectiveValue = (key) => {
+		return attributes[activeViewport][key] || getInheritedValue(key);
 	};
 
-	// Reset current viewport to default/inherited values
-	const resetViewport = () => {
-		const updates = {
-			[activeViewport]: {
-				display: '',
-				position: '',
-				top: '',
-				right: '',
-				bottom: '',
-				left: '',
-				width: '',
-				height: '',
-				zIndex: ''
-			}
-		};
-		
-		// Also reset breakpoint to default
-		if (activeViewport === 'tablet') {
-			updates.tabletBreakpoint = '600px';
-		} else if (activeViewport === 'desktop') {
-			updates.desktopBreakpoint = '1024px';
-		}
-		
-		setAttributes(updates);
-	};
+	const hasOverride = (key) => activeViewport === 'mobile' || attributes[activeViewport][key] !== '';
 
-	// Check if a specific viewport has any values set
-	const viewportHasValues = (viewport) => {
-		return Object.values(attributes[viewport]).some(val => val !== '');
-	};
+	// Build select options with inheritance indicator
+	const buildOptions = (type) => {
+		const baseOptions = OPTIONS[type].map(v => ({
+			label: v.charAt(0).toUpperCase() + v.slice(1).replace('-', '-'),
+			value: v
+		}));
 
-	// Check if current viewport has any values set
-	const hasAnyValues = () => {
-		return viewportHasValues(activeViewport);
-	};
-
-	// Build position options with inherited value indicator
-	const getPositionOptions = () => {
-		const baseOptions = [
-			{ label: __('Static', 'flexible-container'), value: 'static' },
-			{ label: __('Relative', 'flexible-container'), value: 'relative' },
-			{ label: __('Absolute', 'flexible-container'), value: 'absolute' },
-			{ label: __('Fixed', 'flexible-container'), value: 'fixed' },
-			{ label: __('Sticky', 'flexible-container'), value: 'sticky' }
-		];
-		
-		// For mobile, just show "Default" as first option
 		if (activeViewport === 'mobile') {
 			return [{ label: __('Default', 'flexible-container'), value: '' }, ...baseOptions];
 		}
-		
-		// For tablet/desktop, show what value would be inherited
-		let inheritedValue = '';
-		if (activeViewport === 'tablet') {
-			inheritedValue = attributes.mobile.position;
-		} else if (activeViewport === 'desktop') {
-			// Desktop inherits from tablet if set, otherwise mobile
-			inheritedValue = attributes.tablet.position || attributes.mobile.position;
-		}
-		
-		const inheritLabel = inheritedValue 
-			? `↑ ${inheritedValue.charAt(0).toUpperCase() + inheritedValue.slice(1)} (inherited)`
+
+		const inherited = getInheritedValue(type);
+		const inheritLabel = inherited
+			? `↑ ${inherited.charAt(0).toUpperCase() + inherited.slice(1)} (inherited)`
 			: __('↑ Default (inherited)', 'flexible-container');
-		
+
 		return [{ label: inheritLabel, value: '' }, ...baseOptions];
 	};
 
-	// Build display options with inherited value indicator
-	const getDisplayOptions = () => {
-		const baseOptions = [
-			{ label: __('Block', 'flexible-container'), value: 'block' },
-			{ label: __('Flex', 'flexible-container'), value: 'flex' },
-			{ label: __('Grid', 'flexible-container'), value: 'grid' },
-			{ label: __('Inline', 'flexible-container'), value: 'inline' },
-			{ label: __('Inline-Block', 'flexible-container'), value: 'inline-block' },
-			{ label: __('Inline-Flex', 'flexible-container'), value: 'inline-flex' },
-			{ label: __('None', 'flexible-container'), value: 'none' }
-		];
-		
-		if (activeViewport === 'mobile') {
-			return [{ label: __('Default', 'flexible-container'), value: '' }, ...baseOptions];
-		}
-		
-		let inheritedValue = '';
-		if (activeViewport === 'tablet') {
-			inheritedValue = attributes.mobile.display;
-		} else if (activeViewport === 'desktop') {
-			inheritedValue = attributes.tablet.display || attributes.mobile.display;
-		}
-		
-		const inheritLabel = inheritedValue 
-			? `↑ ${inheritedValue.charAt(0).toUpperCase() + inheritedValue.slice(1)} (inherited)`
-			: __('↑ Default (inherited)', 'flexible-container');
-		
-		return [{ label: inheritLabel, value: '' }, ...baseOptions];
-	};
-
-	const viewportIcons = {
-		mobile: { icon: mobile, label: __('Mobile', 'flexible-container') },
-		tablet: { icon: tablet, label: __('Tablet', 'flexible-container') },
-		desktop: { icon: desktop, label: __('Desktop', 'flexible-container') }
-	};
-
+	// Build inline styles for preview
 	const getInlineStyles = () => {
-		const styles = {};
-		
-		const display = getEffectiveValue('display');
-		const position = getEffectiveValue('position');
-		const top = getEffectiveValue('top');
-		const right = getEffectiveValue('right');
-		const bottom = getEffectiveValue('bottom');
-		const left = getEffectiveValue('left');
-		const width = getEffectiveValue('width');
-		const height = getEffectiveValue('height');
-		const zIndex = getEffectiveValue('zIndex');
-		
-		if (display) styles.display = display;
-		if (position) styles.position = position;
-		if (top) styles.top = top;
-		if (right) styles.right = right;
-		if (bottom) styles.bottom = bottom;
-		if (left) styles.left = left;
-		if (width) styles.width = width;
-		if (height) styles.height = height;
-		if (zIndex) styles.zIndex = zIndex;
-		
-		return styles;
+		return Object.fromEntries(
+			PROPS.map(p => [p, getEffectiveValue(p)]).filter(([, v]) => v)
+		);
 	};
+
+	const viewportData = attributes[activeViewport];
+	const updateAttr = (key, value) => setAttributes({ [activeViewport]: { ...viewportData, [key]: value } });
+	const viewportHasValues = (vp) => Object.values(attributes[vp]).some(v => v !== '');
 
 	const blockProps = useBlockProps({
+		className: 'fc-block',
 		style: getInlineStyles()
 	});
-	
-	// Check if current viewport has overridden values
-	const hasOverride = (key) => {
-		if (activeViewport === 'mobile') return true;
-		return viewportData[key] !== '';
+
+	// Reusable field component
+	const Field = ({ label, prop, type = 'text', options }) => {
+		const isInherited = !hasOverride(prop) && activeViewport !== 'mobile';
+		const commonProps = {
+			label: __(label, 'flexible-container'),
+			value: viewportData[prop],
+			onChange: (v) => updateAttr(prop, v),
+			className: isInherited ? 'is-inherited' : ''
+		};
+
+		return type === 'select' ? (
+			<SelectControl {...commonProps} options={options} />
+		) : (
+			<TextControl {...commonProps} placeholder={isInherited ? getEffectiveValue(prop) || 'inherited' : ''} />
+		);
 	};
 
 	return (
@@ -275,7 +142,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					<div className="flexible-container-viewport-controls">
 						<div className="flexible-container-viewport-tabs">
 							<ButtonGroup>
-								{Object.entries(viewportIcons).map(([key, { icon, label }]) => (
+								{Object.entries(VIEWPORTS).map(([key, { icon, label }]) => (
 									<Button
 										key={key}
 										icon={icon}
@@ -288,25 +155,14 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							</ButtonGroup>
 						</div>
 						<div className="flexible-container-viewport-label">
-							{__('Editing:', 'flexible-container')} <strong>{viewportIcons[activeViewport].label}</strong>
-							{activeViewport === 'tablet' && (
-								<TextControl
-									value={attributes.tabletBreakpoint}
-									onChange={(value) => setAttributes({ tabletBreakpoint: value })}
-									className="flexible-container-breakpoint-input"
-								/>
+							{__('Editing:', 'flexible-container')} <strong>{VIEWPORTS[activeViewport].label}</strong>
+							{VIEWPORTS[activeViewport].breakpoint && (
+								<span className="flexible-container-breakpoint">{VIEWPORTS[activeViewport].breakpoint}</span>
 							)}
-							{activeViewport === 'desktop' && (
-								<TextControl
-									value={attributes.desktopBreakpoint}
-									onChange={(value) => setAttributes({ desktopBreakpoint: value })}
-									className="flexible-container-breakpoint-input"
-								/>
-							)}
-							{hasAnyValues() && (
+							{viewportHasValues(activeViewport) && (
 								<Button
 									icon={reset}
-									onClick={resetViewport}
+									onClick={() => setAttributes({ [activeViewport]: EMPTY_VIEWPORT })}
 									label={__('Reset all values', 'flexible-container')}
 									isSmall
 									isDestructive
@@ -315,88 +171,30 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							)}
 							{activeViewport !== 'mobile' && (
 								<div className="flexible-container-inheritance-note">
-									{activeViewport === 'tablet' && __('Inherits from Mobile unless overridden', 'flexible-container')}
-									{activeViewport === 'desktop' && __('Inherits from Tablet/Mobile unless overridden', 'flexible-container')}
+									{activeViewport === 'tablet' && __('Inherits from Mobile', 'flexible-container')}
+									{activeViewport === 'desktop' && __('Inherits from Tablet/Mobile', 'flexible-container')}
 								</div>
 							)}
 						</div>
 					</div>
-					
-					<SelectControl
-						label={__('Display', 'flexible-container')}
-						value={viewportData.display}
-						options={getDisplayOptions()}
-						onChange={(value) => updateViewportAttribute('display', value)}
-						className={!hasOverride('display') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
-					/>
 				</PanelBody>
-				
+
+				<PanelBody title={__('Display', 'flexible-container')} initialOpen={true}>
+					<Field label="Display" prop="display" type="select" options={buildOptions('display')} />
+				</PanelBody>
+
 				<PanelBody title={__('Position', 'flexible-container')}>
-					<SelectControl
-						label={__('Position Type', 'flexible-container')}
-						value={viewportData.position}
-						options={getPositionOptions()}
-						onChange={(value) => updateViewportAttribute('position', value)}
-						className={!hasOverride('position') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
-					/>
-					
-					<TextControl
-						label={__('Top', 'flexible-container')}
-						value={viewportData.top}
-						onChange={(value) => updateViewportAttribute('top', value)}
-						placeholder={!hasOverride('top') && activeViewport !== 'mobile' ? getEffectiveValue('top') || 'inherited' : ''}
-						className={!hasOverride('top') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
-					/>
-					
-					<TextControl
-						label={__('Right', 'flexible-container')}
-						value={viewportData.right}
-						onChange={(value) => updateViewportAttribute('right', value)}
-						placeholder={!hasOverride('right') && activeViewport !== 'mobile' ? getEffectiveValue('right') || 'inherited' : ''}
-						className={!hasOverride('right') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
-					/>
-					
-					<TextControl
-						label={__('Bottom', 'flexible-container')}
-						value={viewportData.bottom}
-						onChange={(value) => updateViewportAttribute('bottom', value)}
-						placeholder={!hasOverride('bottom') && activeViewport !== 'mobile' ? getEffectiveValue('bottom') || 'inherited' : ''}
-						className={!hasOverride('bottom') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
-					/>
-					
-					<TextControl
-						label={__('Left', 'flexible-container')}
-						value={viewportData.left}
-						onChange={(value) => updateViewportAttribute('left', value)}
-						placeholder={!hasOverride('left') && activeViewport !== 'mobile' ? getEffectiveValue('left') || 'inherited' : ''}
-						className={!hasOverride('left') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
-					/>
-					
-					<TextControl
-						label={__('Z-Index', 'flexible-container')}
-						value={viewportData.zIndex}
-						onChange={(value) => updateViewportAttribute('zIndex', value)}
-						placeholder={!hasOverride('zIndex') && activeViewport !== 'mobile' ? getEffectiveValue('zIndex') || 'inherited' : ''}
-						className={!hasOverride('zIndex') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
-					/>
+					<Field label="Position Type" prop="position" type="select" options={buildOptions('position')} />
+					<Field label="Top" prop="top" />
+					<Field label="Right" prop="right" />
+					<Field label="Bottom" prop="bottom" />
+					<Field label="Left" prop="left" />
+					<Field label="Z-Index" prop="zIndex" />
 				</PanelBody>
-				
+
 				<PanelBody title={__('Dimensions', 'flexible-container')} initialOpen={true}>
-					<TextControl
-						label={__('Width', 'flexible-container')}
-						value={viewportData.width}
-						onChange={(value) => updateViewportAttribute('width', value)}
-						placeholder={!hasOverride('width') && activeViewport !== 'mobile' ? getEffectiveValue('width') || 'inherited' : ''}
-						className={!hasOverride('width') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
-					/>
-					
-					<TextControl
-						label={__('Height', 'flexible-container')}
-						value={viewportData.height}
-						onChange={(value) => updateViewportAttribute('height', value)}
-						placeholder={!hasOverride('height') && activeViewport !== 'mobile' ? getEffectiveValue('height') || 'inherited' : ''}
-						className={!hasOverride('height') && activeViewport !== 'mobile' ? 'is-inherited' : ''}
-					/>
+					<Field label="Width" prop="width" />
+					<Field label="Height" prop="height" />
 				</PanelBody>
 			</InspectorControls>
 
