@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Flexible Container
  * Description:       A flexible container block with responsive positioning controls and support for CSS variables
- * Version:           0.1.0
+ * Version:           0.1.1
  * Requires at least: 6.1
  * Requires PHP:      7.0
  * Author:            Flashblocks
@@ -18,34 +18,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Get current BBE breakpoints as min-width values.
- *
- * @return array{tabletMin: int, desktopMin: int}
+ * Flexible Container Block Class
  */
-function flashblocks_fc_get_breakpoints(): array {
-	if ( function_exists( 'fns_bbe_get_breakpoint' ) ) {
-		$mobile_max = fns_bbe_get_breakpoint( 'mobile', false ) ?? 480;
-		$tablet_max = fns_bbe_get_breakpoint( 'tablet', false ) ?? 960;
-	} else {
-		$breakpoints = get_option( 'better-block-editor__user-defined-responsiveness-breakpoints', array() );
-		$mobile_max  = isset( $breakpoints['mobile']['value'] ) ? (int) $breakpoints['mobile']['value'] : 480;
-		$tablet_max  = isset( $breakpoints['tablet']['value'] ) ? (int) $breakpoints['tablet']['value'] : 960;
-	}
+class Flashblocks_Flexible_Container {
 
-	return array(
-		'tabletMin'  => $mobile_max + 1,
-		'desktopMin' => $tablet_max + 1,
-	);
-}
-
-/**
- * Generate CSS rules from viewport attributes.
- *
- * @param array $values Viewport CSS values.
- * @return string CSS rules.
- */
-function flashblocks_fc_generate_css( array $values ): string {
-	$prop_map = array(
+	/**
+	 * CSS property mapping.
+	 */
+	private static $prop_map = [
 		'display'   => 'display',
 		'position'  => 'position',
 		'top'       => 'top',
@@ -56,114 +36,170 @@ function flashblocks_fc_generate_css( array $values ): string {
 		'height'    => 'height',
 		'zIndex'    => 'z-index',
 		'transform' => 'transform',
-	);
+	];
 
-	$rules = array();
-	foreach ( $prop_map as $attr_key => $css_prop ) {
-		if ( isset( $values[ $attr_key ] ) && $values[ $attr_key ] !== '' ) {
-			$rules[] = $css_prop . ': ' . $values[ $attr_key ];
-		}
+	/**
+	 * Collected styles storage.
+	 */
+	private static $styles = [
+		'mobile'  => [],
+		'tablet'  => [],
+		'desktop' => [],
+	];
+
+	/**
+	 * Constructor - register hooks.
+	 */
+	public function __construct() {
+		// Initialize the plugin.
+		add_action( 'init', [ $this, 'init' ] );
+
+		// Hook into block rendering.
+		add_filter( 'render_block_flashblocks/flexible-container', [ $this, 'collect_styles_on_render' ], 10, 2 );
+
+		// Output styles in footer.
+		add_action( 'wp_footer', [ $this, 'output_collected_styles' ], 1 );
+
+		// Enqueue editor assets.
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_editor_assets' ] );
 	}
 
-	return $rules ? implode( '; ', $rules ) . ';' : '';
-}
+	/**
+	 * Get current BBE breakpoints as min-width values.
+	 *
+	 * @return array{tabletMin: int, desktopMin: int}
+	 */
+	public static function get_breakpoints(): array {
+		if ( function_exists( 'fns_bbe_get_breakpoint' ) ) {
+			$mobile_max = fns_bbe_get_breakpoint( 'mobile', false ) ?? 480;
+			$tablet_max = fns_bbe_get_breakpoint( 'tablet', false ) ?? 960;
+		} else {
+			$breakpoints = get_option( 'better-block-editor__user-defined-responsiveness-breakpoints', [] );
+			$mobile_max  = isset( $breakpoints['mobile']['value'] ) ? (int) $breakpoints['mobile']['value'] : 480;
+			$tablet_max  = isset( $breakpoints['tablet']['value'] ) ? (int) $breakpoints['tablet']['value'] : 960;
+		}
 
-/**
- * Registers the block using the metadata loaded from the `block.json` file.
- * Behind the scenes, it registers also all assets so they can be enqueued
- * through the block editor in the corresponding context.
- *
- * @see https://developer.wordpress.org/reference/functions/register_block_type/
- */
-function flashblocks_flexible_container_block_init() {
-	register_block_type( __DIR__ . '/build/' );
-}
-add_action( 'init', 'flashblocks_flexible_container_block_init' );
+		return [
+			'tabletMin'  => $mobile_max + 1,
+			'desktopMin' => $tablet_max + 1,
+		];
+	}
 
-/**
- * Storage for collected FC block styles during render.
- */
-global $flashblocks_fc_styles;
-$flashblocks_fc_styles = array();
+	/**
+	 * Generate CSS rules from viewport attributes.
+	 *
+	 * @param array $values Viewport CSS values.
+	 * @return string CSS rules.
+	 */
+	public static function generate_css( array $values ): string {
+		$rules = [];
+		foreach ( self::$prop_map as $attr_key => $css_prop ) {
+			if ( ( $values[ $attr_key ] ?? '' ) !== '' ) {
+				$rules[] = $css_prop . ':' . $values[ $attr_key ];
+			}
+		}
 
-/**
- * Collect styles from FC blocks during render_block filter.
- * Styles are stored and output once at wp_footer.
- *
- * @param string $block_content Rendered block content.
- * @param array  $block         Block data.
- * @return string Unmodified block content.
- */
-function flashblocks_fc_collect_styles_on_render( string $block_content, array $block ): string {
-	global $flashblocks_fc_styles;
+		return $rules ? implode( '; ', $rules ) . ';' : '';
+	}
 
-	$attrs    = $block['attrs'] ?? array();
-	$block_id = $attrs['blockId'] ?? '';
+	/**
+	 * Collect styles from FC blocks during render_block filter.
+	 *
+	 * @param string $block_content Rendered block content.
+	 * @param array  $block         Block data.
+	 * @return string Unmodified block content.
+	 */
+	public function collect_styles_on_render( string $block_content, array $block ): string {
+		$attrs    = $block['attrs'] ?? [];
+		$block_id = $attrs['blockId'] ?? '';
 
-	if ( ! $block_id ) {
+		if ( ! $block_id ) {
+			return $block_content;
+		}
+
+		// Collect styles for this block.
+		self::$styles['mobile'][ $block_id ]  = self::generate_css( $attrs['mobile'] ?? [] );
+		self::$styles['tablet'][ $block_id ]  = self::generate_css( $attrs['tablet'] ?? [] );
+		self::$styles['desktop'][ $block_id ] = self::generate_css( $attrs['desktop'] ?? [] );
+
 		return $block_content;
 	}
 
-	// Collect styles for this block.
-	$flashblocks_fc_styles[ $block_id ] = array(
-		'mobile'  => flashblocks_fc_generate_css( $attrs['mobile'] ?? array() ),
-		'tablet'  => flashblocks_fc_generate_css( $attrs['tablet'] ?? array() ),
-		'desktop' => flashblocks_fc_generate_css( $attrs['desktop'] ?? array() ),
-	);
+	/**
+	 * Output collected FC block styles in footer.
+	 */
+	public function output_collected_styles(): void {
+		if ( empty( self::$styles['mobile'] ) && empty( self::$styles['tablet'] ) && empty( self::$styles['desktop'] ) ) {
+			return;
+		}
 
-	return $block_content;
-}
-add_filter( 'render_block_flashblocks/flexible-container', 'flashblocks_fc_collect_styles_on_render', 10, 2 );
+		// Get current BBE breakpoints.
+		$bp = self::get_breakpoints();
 
-/**
- * Output collected FC block styles in footer.
- * Uses current BBE breakpoints at render time.
- */
-function flashblocks_fc_output_collected_styles(): void {
-	global $flashblocks_fc_styles;
+		// Build CSS output.
+		$css_output = '';
 
-	if ( empty( $flashblocks_fc_styles ) ) {
-		return;
+		// Mobile rules (no media query)
+		foreach ( self::$styles['mobile'] as $block_id => $css ) {
+			if ( ! empty( $css ) ) {
+				$css_output .= '.' . esc_attr( $block_id ) . " { {$css} } ";
+			}
+		}
+
+		// Tablet rules
+		$tablet_css = '';
+		foreach ( self::$styles['tablet'] as $block_id => $css ) {
+			if ( ! empty( $css ) ) {
+				$tablet_css .= '.' . esc_attr( $block_id ) . " { {$css} } ";
+			}
+		}
+		if ( ! empty( $tablet_css ) ) {
+			$css_output .= "@media (min-width: {$bp['tabletMin']}px) { {$tablet_css} } ";
+		}
+
+		// Desktop rules
+		$desktop_css = '';
+		foreach ( self::$styles['desktop'] as $block_id => $css ) {
+			if ( ! empty( $css ) ) {
+				$desktop_css .= '.' . esc_attr( $block_id ) . " { {$css} } ";
+			}
+		}
+		if ( ! empty( $desktop_css ) ) {
+			$css_output .= "@media (min-width: {$bp['desktopMin']}px) { {$desktop_css} } ";
+		}
+
+		if ( $css_output ) {
+			echo '<style id="flashblocks-fc-styles">' . $css_output . '</style>' . PHP_EOL;
+		}
+
+		// Clear for next page load.
+		self::$styles = [
+			'mobile'  => [],
+			'tablet'  => [],
+			'desktop' => [],
+		];
 	}
 
-	// Get current BBE breakpoints.
-	$bp = flashblocks_fc_get_breakpoints();
+	/**
+	 * Pass BBE breakpoints to the editor script.
+	 */
+	public function enqueue_editor_assets(): void {
+		$bp = self::get_breakpoints();
 
-	// Build CSS output.
-	$css_output = '';
-	foreach ( $flashblocks_fc_styles as $block_id => $viewports ) {
-		$selector = '.' . esc_attr( $block_id );
-
-		if ( ! empty( $viewports['mobile'] ) ) {
-			$css_output .= "{$selector} { {$viewports['mobile']} } ";
-		}
-		if ( ! empty( $viewports['tablet'] ) ) {
-			$css_output .= "@media (min-width: {$bp['tabletMin']}px) { {$selector} { {$viewports['tablet']} } } ";
-		}
-		if ( ! empty( $viewports['desktop'] ) ) {
-			$css_output .= "@media (min-width: {$bp['desktopMin']}px) { {$selector} { {$viewports['desktop']} } } ";
-		}
+		wp_localize_script(
+			'flashblocks-flexible-container-editor-script',
+			'fcBreakpoints',
+			$bp
+		);
 	}
 
-	if ( $css_output ) {
-		echo '<style id="flashblocks-fc-styles">' . $css_output . '</style>' . PHP_EOL;
+	/**
+	 * Initialize the plugin.
+	 */
+	public function init(): void {
+		register_block_type( __DIR__ . '/build/' );
 	}
-
-	// Clear for next page load.
-	$flashblocks_fc_styles = array();
 }
-add_action( 'wp_footer', 'flashblocks_fc_output_collected_styles', 1 );
 
-/**
- * Pass BBE breakpoints to the editor script.
- */
-function flashblocks_fc_enqueue_editor_assets() {
-	$bp = flashblocks_fc_get_breakpoints();
-
-	wp_localize_script(
-		'flashblocks-flexible-container-editor-script',
-		'fcBreakpoints',
-		$bp
-	);
-}
-add_action( 'enqueue_block_editor_assets', 'flashblocks_fc_enqueue_editor_assets' );
+// Initialize the plugin.
+new Flashblocks_Flexible_Container();

@@ -3,7 +3,7 @@
 Contributors:      flashblocks
 Tags:              block, container, responsive, positioning
 Tested up to:      6.8
-Stable tag:        0.1.0
+Stable tag:        0.1.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -91,6 +91,14 @@ It sets `display: none` for the selected viewport. Combined with inheritance, yo
 3. Example of a complex layout using multiple Flexible Containers
 
 == Changelog ==
+
+= 0.1.1 =
+* Refactored plugin to use class-based architecture (`Flashblocks_Flexible_Container`)
+* Consolidated CSS output - media queries now grouped together instead of per-block
+* Added wrapper structure with `.fc-inner` for improved positioning context
+* Fixed `bottom: 0` and other zero values not working (PHP empty() issue)
+* Updated to use short array syntax `[]` instead of `array()`
+* Improved code organization and maintainability
 
 = 0.1.0 =
 * Initial release

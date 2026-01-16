@@ -18,12 +18,12 @@ This is a WordPress Gutenberg block plugin called "Flexible Container" that prov
 
 ### Block Structure
 
-- **`flashblocks-flexible-container.php`** - Plugin entry point, registers block, collects styles via `render_block` filter, outputs CSS via `wp_footer`
+- **`flashblocks-flexible-container.php`** - Main plugin file with `Flashblocks_Flexible_Container` class, handles block registration, style collection/output, and BBE integration
 - **`src/block.json`** - Block metadata with responsive attributes for mobile/tablet/desktop
 - **`src/edit.js`** - Editor component with Inspector Controls for responsive settings
-- **`src/save.js`** - Simple save function (just outputs div with blockId class, PHP handles styles)
+- **`src/save.js`** - Save function outputs wrapper div structure with blockId class
 - **`src/utils.js`** - Shared utilities (PROPS, EMPTY_VIEWPORT, POSITION_OPTIONS, getBreakpoints, generateBlockId)
-- **`src/style.scss`** - Base styles for the block
+- **`src/style.scss`** - Base styles including `.fc-inner` positioning context
 - **`src/editor.scss`** - Editor-only styles for the block UI
 
 ### Responsive System
@@ -51,8 +51,17 @@ This approach (similar to BBE's StyleEngine pattern):
 <!-- Output in wp_footer -->
 <style id="flashblocks-fc-styles">
 .fc-abc1234 { display: none; }
-@media (min-width: 481px) { .fc-abc1234 { display: block; } }
-@media (min-width: 961px) { .fc-abc1234 { width: 50%; } }
+.fc-def5678 { position: absolute; top: -20px; }
+
+@media (min-width: 481px) {
+    .fc-abc1234 { display: block; }
+    .fc-def5678 { width: 450px; }
+}
+
+@media (min-width: 961px) {
+    .fc-abc1234 { width: 50%; }
+    .fc-def5678 { width: 660px; }
+}
 </style>
 ```
 
