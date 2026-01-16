@@ -48,6 +48,11 @@ class Flashblocks_Flexible_Container {
 	];
 
 	/**
+	 * Cached breakpoints.
+	 */
+	private static $cached_breakpoints = null;
+
+	/**
 	 * Constructor - register hooks.
 	 */
 	public function __construct() {
@@ -65,11 +70,15 @@ class Flashblocks_Flexible_Container {
 	}
 
 	/**
-	 * Get current BBE breakpoints as min-width values.
+	 * Get current BBE breakpoints as min-width values (cached).
 	 *
 	 * @return array{tabletMin: int, desktopMin: int}
 	 */
 	public static function get_breakpoints(): array {
+		if ( self::$cached_breakpoints !== null ) {
+			return self::$cached_breakpoints;
+		}
+
 		if ( function_exists( 'fns_bbe_get_breakpoint' ) ) {
 			$mobile_max = fns_bbe_get_breakpoint( 'mobile', false ) ?? 480;
 			$tablet_max = fns_bbe_get_breakpoint( 'tablet', false ) ?? 960;
@@ -79,10 +88,27 @@ class Flashblocks_Flexible_Container {
 			$tablet_max  = isset( $breakpoints['tablet']['value'] ) ? (int) $breakpoints['tablet']['value'] : 960;
 		}
 
-		return [
+		self::$cached_breakpoints = [
 			'tabletMin'  => $mobile_max + 1,
 			'desktopMin' => $tablet_max + 1,
 		];
+
+		return self::$cached_breakpoints;
+	}
+
+	/**
+	 * Check if viewport has any non-empty values.
+	 *
+	 * @param array $values Viewport CSS values.
+	 * @return bool True if has values.
+	 */
+	private static function has_values( array $values ): bool {
+		foreach ( self::$prop_map as $attr_key => $css_prop ) {
+			if ( ( $values[ $attr_key ] ?? '' ) !== '' ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -92,10 +118,14 @@ class Flashblocks_Flexible_Container {
 	 * @return string CSS rules.
 	 */
 	public static function generate_css( array $values ): string {
+		if ( ! self::has_values( $values ) ) {
+			return '';
+		}
+
 		$rules = ['box-sizing: border-box'];
 		foreach ( self::$prop_map as $attr_key => $css_prop ) {
 			if ( ( $values[ $attr_key ] ?? '' ) === '' ) continue;
-			
+
 			$rules[] = $css_prop . ':' . $values[ $attr_key ];
 		}
 
