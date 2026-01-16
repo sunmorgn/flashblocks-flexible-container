@@ -92,14 +92,14 @@ class Flashblocks_Flexible_Container {
 	 * @return string CSS rules.
 	 */
 	public static function generate_css( array $values ): string {
-		$rules = [];
+		$rules = ['box-sizing: border-box'];
 		foreach ( self::$prop_map as $attr_key => $css_prop ) {
-			if ( ( $values[ $attr_key ] ?? '' ) !== '' ) {
-				$rules[] = $css_prop . ':' . $values[ $attr_key ];
-			}
+			if ( ( $values[ $attr_key ] ?? '' ) === '' ) continue;
+			
+			$rules[] = $css_prop . ':' . $values[ $attr_key ];
 		}
 
-		return $rules ? implode( '; ', $rules ) . ';' : '';
+		return implode( '; ', $rules ) . ';';
 	}
 
 	/**
