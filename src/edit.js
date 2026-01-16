@@ -17,35 +17,27 @@ import { useSelect, useDispatch } from "@wordpress/data";
 import { desktop, tablet, mobile, reset } from "@wordpress/icons";
 import "./editor.scss";
 
-// Constants
+import {
+  PROPS,
+  EMPTY_VIEWPORT,
+  POSITION_OPTIONS,
+  getBreakpoints,
+  generateBlockId,
+} from "./utils";
+
+// Get current breakpoints
+const bp = getBreakpoints();
+
+// Viewport configuration with icons and breakpoints
 const VIEWPORTS = {
   mobile: { icon: mobile, label: "Mobile", breakpoint: null },
-  tablet: { icon: tablet, label: "Tablet", breakpoint: "600px" },
-  desktop: { icon: desktop, label: "Desktop", breakpoint: "1024px" },
+  tablet: { icon: tablet, label: "Tablet", breakpoint: `${bp.tabletMin}px` },
+  desktop: { icon: desktop, label: "Desktop", breakpoint: `${bp.desktopMin}px` },
 };
-
-const PROPS = [
-  "display",
-  "position",
-  "top",
-  "right",
-  "bottom",
-  "left",
-  "width",
-  "height",
-  "zIndex",
-  "transform",
-];
-
-const EMPTY_VIEWPORT = Object.fromEntries(PROPS.map((p) => [p, ""]));
 
 const toDeviceType = (viewport) =>
   viewport.charAt(0).toUpperCase() + viewport.slice(1);
 const toViewport = (deviceType) => deviceType.toLowerCase();
-
-const OPTIONS = {
-  position: ["static", "relative", "absolute", "fixed", "sticky"],
-};
 
 // Field component - defined outside to prevent focus loss on re-render
 const Field = ({
@@ -77,6 +69,13 @@ const Field = ({
 export default function Edit({ attributes, setAttributes }) {
   const [activeViewport, setActiveViewport] = useState("desktop");
   const skipNextSync = useRef(false);
+
+  // Generate blockId on mount (styles are handled by PHP)
+  useEffect(() => {
+    if (!attributes.blockId) {
+      setAttributes({ blockId: generateBlockId() });
+    }
+  }, []);
 
   // Get/set editor device preview
   const editorDeviceType = useSelect((select) => {
@@ -137,9 +136,9 @@ export default function Edit({ attributes, setAttributes }) {
     activeViewport === "mobile" || attributes[activeViewport][key] !== "";
 
   // Build select options with inheritance indicator
-  const buildOptions = (type) => {
-    const baseOptions = OPTIONS[type].map((v) => ({
-      label: v.charAt(0).toUpperCase() + v.slice(1).replace("-", "-"),
+  const buildPositionOptions = () => {
+    const baseOptions = POSITION_OPTIONS.map((v) => ({
+      label: v.charAt(0).toUpperCase() + v.slice(1),
       value: v,
     }));
 
@@ -150,11 +149,9 @@ export default function Edit({ attributes, setAttributes }) {
       ];
     }
 
-    const inherited = getInheritedValue(type);
+    const inherited = getInheritedValue("position");
     const inheritLabel = inherited
-      ? `↑ ${
-          inherited.charAt(0).toUpperCase() + inherited.slice(1)
-        } (inherited)`
+      ? `↑ ${inherited.charAt(0).toUpperCase() + inherited.slice(1)} (inherited)`
       : __("↑ Default (inherited)", "flexible-container");
 
     return [{ label: inheritLabel, value: "" }, ...baseOptions];
@@ -250,7 +247,7 @@ export default function Edit({ attributes, setAttributes }) {
         <PanelBody title={__("Position", "flexible-container")}>
           <Field
             label="Position Type"
-            {...fieldProps("position", "select", buildOptions("position"))}
+            {...fieldProps("position", "select", buildPositionOptions())}
           />
           {["relative", "absolute", "fixed", "sticky"].includes(
             getEffectiveValue("position"),

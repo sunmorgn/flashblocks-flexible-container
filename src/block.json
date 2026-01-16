@@ -10,6 +10,10 @@
 	"description": "A flexible container with responsive positioning and sizing controls",
 	"keywords": ["container", "position", "responsive", "layout"],
 	"attributes": {
+		"blockId": {
+			"type": "string",
+			"default": ""
+		},
 		"desktop": {
 			"type": "object",
 			"default": {

@@ -14,6 +14,10 @@
     "layout"
   ],
   "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
     "desktop": {
       "type": "object",
       "default": {

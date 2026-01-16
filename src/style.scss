@@ -1,48 +1,7 @@
 // Frontend styles for Flexible Container
-// Uses CSS custom properties with fallback inheritance
+// Base styles only - media queries are generated inline per block
 
 .fc-block {
-	// Mobile-first: apply mobile values directly (with safe fallbacks)
-	display: var(--fc-display, block);
-	position: var(--fc-position, static);
-	top: var(--fc-top, auto);
-	right: var(--fc-right, auto);
-	bottom: var(--fc-bottom, auto);
-	left: var(--fc-left, auto);
-	width: var(--fc-width, auto);
-	height: var(--fc-height, auto);
-	z-index: var(--fc-z-index, auto);
-	transform: var(--fc-transform, none);
-}
-
-// Tablet: override with tablet values if set
-@media (min-width: 600px) {
-	.fc-block {
-		display: var(--fc-display-tablet, var(--fc-display, block));
-		position: var(--fc-position-tablet, var(--fc-position, static));
-		top: var(--fc-top-tablet, var(--fc-top, auto));
-		right: var(--fc-right-tablet, var(--fc-right, auto));
-		bottom: var(--fc-bottom-tablet, var(--fc-bottom, auto));
-		left: var(--fc-left-tablet, var(--fc-left, auto));
-		width: var(--fc-width-tablet, var(--fc-width, auto));
-		height: var(--fc-height-tablet, var(--fc-height, auto));
-		z-index: var(--fc-z-index-tablet, var(--fc-z-index, auto));
-		transform: var(--fc-transform-tablet, var(--fc-transform, none));
-	}
-}
-
-// Desktop: override with desktop values, fall back to tablet, then mobile
-@media (min-width: 1024px) {
-	.fc-block {
-		display: var(--fc-display-desktop, var(--fc-display-tablet, var(--fc-display, block)));
-		position: var(--fc-position-desktop, var(--fc-position-tablet, var(--fc-position, static)));
-		top: var(--fc-top-desktop, var(--fc-top-tablet, var(--fc-top, auto)));
-		right: var(--fc-right-desktop, var(--fc-right-tablet, var(--fc-right, auto)));
-		bottom: var(--fc-bottom-desktop, var(--fc-bottom-tablet, var(--fc-bottom, auto)));
-		left: var(--fc-left-desktop, var(--fc-left-tablet, var(--fc-left, auto)));
-		width: var(--fc-width-desktop, var(--fc-width-tablet, var(--fc-width, auto)));
-		height: var(--fc-height-desktop, var(--fc-height-tablet, var(--fc-height, auto)));
-		z-index: var(--fc-z-index-desktop, var(--fc-z-index-tablet, var(--fc-z-index, auto)));
-		transform: var(--fc-transform-desktop, var(--fc-transform-tablet, var(--fc-transform, none)));
-	}
+	// Ensure the block is a proper container
+	box-sizing: border-box;
 }
