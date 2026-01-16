@@ -60,7 +60,7 @@ function flashblocks_fc_generate_css( array $values ): string {
 
 	$rules = array();
 	foreach ( $prop_map as $attr_key => $css_prop ) {
-		if ( ! empty( $values[ $attr_key ] ) ) {
+		if ( isset( $values[ $attr_key ] ) && $values[ $attr_key ] !== '' ) {
 			$rules[] = $css_prop . ': ' . $values[ $attr_key ];
 		}
 	}
